@@ -1,3 +1,4 @@
+
 package coolsquid.react.util;
 
 import java.io.BufferedWriter;
@@ -54,14 +55,6 @@ public class Log {
 			} catch (IOException e) {
 				LOG4J.catching(e);
 			}
-		}
-	}
-
-	public static void clear() {
-		try {
-			LOG.flush();
-		} catch (IOException e) {
-
 		}
 	}
 

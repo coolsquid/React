@@ -1,3 +1,4 @@
+
 package coolsquid.react;
 
 import java.util.Map;
@@ -36,7 +37,7 @@ public class React {
 
 	@Mod.EventHandler
 	public void onPreInit(FMLPreInitializationEvent event) {
-		Log.clear();
+		Log.info("Running React v%s.", VERSION);
 	}
 
 	@Mod.EventHandler
@@ -77,7 +78,8 @@ public class React {
 	@NetworkCheckHandler
 	public boolean networkCheck(Map<String, String> versionMap, Side remote) {
 		if (remote == Side.CLIENT && ConfigManager.syncConfigs) {
-			return VERSION.equals(versionMap.get(MODID)); // if sync is enabled, connecting clients must use the same React version as the server
+			return VERSION.equals(versionMap.get(MODID)); // if sync is enabled, connecting clients must use the same
+															// React version as the server
 		}
 		return true;
 	}

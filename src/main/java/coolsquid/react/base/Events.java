@@ -1,3 +1,4 @@
+
 package coolsquid.react.base;
 
 import static coolsquid.react.api.event.EventManager.registerEvent;
@@ -12,12 +13,12 @@ import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
@@ -48,8 +49,9 @@ public class Events {
 		registerEvent("client_chat", ClientChatReceivedEvent.class);
 		registerVariable(ClientChatReceivedEvent.class, "message", (event) -> event.getMessage().getUnformattedText());
 
-		registerVariable(LivingEvent.class, "mob", (event) -> event.getEntityLiving());
-		registerVariable(LivingEvent.class, "world", (event) -> event.getEntityLiving().world);
+		registerVariable(EntityEvent.class, "mob",
+				(event) -> event.getEntity() instanceof EntityLivingBase ? event.getEntity() : null);
+		registerVariable(EntityEvent.class, "world", (event) -> event.getEntity().world);
 
 		registerEvent("mob_hurt", LivingHurtEvent.class);
 		registerEvent("mob_attacked", LivingAttackEvent.class);

@@ -53,11 +53,11 @@ processResources
 	// replace stuff in mcmod.info, nothing else
 	from(sourceSets.main.resources) {
 		include "mcmod.info"
-				
+
 		// replace version and mcversion
 		expand "version":project.version, "mcversion":project.minecraft.version
 	}
-		
+
 	// copy everything else, thats not the mcmod.info
 	from(sourceSets.main.resources) {
 		exclude "mcmod.info"
@@ -75,15 +75,17 @@ task devJar(type: Jar) {
 }
 
 task signJar(type: SignJar, dependsOn: reobfJar) {
-	Properties keyProperties = new Properties()
-	File propsFile = new File('key.properties')
-	keyProperties.load(propsFile.newDataInputStream())
 	inputFile = jar.archivePath
 	outputFile = jar.archivePath
-	keyStore = keyProperties.keyStore;
-	alias = keyProperties.alias;
-	storePass = keyProperties.storePass;
-	keyPass = keyProperties.keyPass;
+	Properties keyProperties = new Properties()
+	File propsFile = new File('key.properties')
+	if (propsFile.exists()) {
+		keyProperties.load(propsFile.newDataInputStream())
+		keyStore = keyProperties.keyStore;
+		alias = keyProperties.alias;
+		storePass = keyProperties.storePass;
+		keyPass = keyProperties.keyPass;
+	}
 }
 if (Boolean.parseBoolean(project.signMainJar)) {
 	build.dependsOn signJar

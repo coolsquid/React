@@ -1,3 +1,4 @@
+
 package coolsquid.react.base;
 
 import static coolsquid.react.api.EventManager.registerAction;
@@ -30,7 +31,7 @@ public class Actions {
 		registerAction("feed",
 				(Action<EntityPlayer>) (event, target, parameters) -> target.getFoodStats().setFoodLevel(
 						target.getFoodStats().getFoodLevel() + ((Number) parameters.get("amount")).intValue()),
-				"duration");
+				"amount");
 
 		registerAction("kill", (Action<EntityLivingBase>) (event, target, parameters) -> target
 				.attackEntityFrom(DamageSource.MAGIC, Float.MAX_VALUE));

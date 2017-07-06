@@ -1,0 +1,13 @@
+[{
+  "modid": "react",
+  "name": "React",
+  "description": "Script reactions to events.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://coolsquid.me",
+  "authorList": ["CoolSquid"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}]

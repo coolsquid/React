@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -34,10 +33,11 @@ public class Actions {
 				"amount");
 
 		registerAction("kill", (Action<EntityLivingBase>) (event, target, parameters) -> target
-				.attackEntityFrom(DamageSource.MAGIC, Float.MAX_VALUE));
-		registerAction(
-				"damage", (Action<EntityLivingBase>) (event, target, parameters) -> target
-						.attackEntityFrom(DamageSource.MAGIC, ((Number) parameters.get("amount")).floatValue()),
+				.attackEntityFrom(Util.getDamageSource(parameters.get("damage_source")), Float.MAX_VALUE));
+		registerAction("damage",
+				(Action<EntityLivingBase>) (event, target, parameters) -> target.attackEntityFrom(
+						Util.getDamageSource(parameters.get("damage_source")),
+						((Number) parameters.get("amount")).floatValue()),
 				"amount");
 		registerAction("heal", (Action<EntityLivingBase>) (event, target, parameters) -> target
 				.heal(((Number) parameters.get("amount")).floatValue()), "amount");

@@ -1,7 +1,7 @@
 package coolsquid.react.base;
 
-import static coolsquid.react.api.EventManager.registerEvent;
-import static coolsquid.react.api.EventManager.registerVariable;
+import static coolsquid.react.api.event.EventManager.registerEvent;
+import static coolsquid.react.api.event.EventManager.registerVariable;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;

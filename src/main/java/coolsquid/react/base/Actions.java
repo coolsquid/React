@@ -1,7 +1,7 @@
 
 package coolsquid.react.base;
 
-import static coolsquid.react.api.EventManager.registerAction;
+import static coolsquid.react.api.event.EventManager.registerAction;
 
 import java.util.Random;
 
@@ -19,7 +19,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
-import coolsquid.react.api.Action;
+import coolsquid.react.api.event.Action;
 import coolsquid.react.util.Log;
 import coolsquid.react.util.Util;
 

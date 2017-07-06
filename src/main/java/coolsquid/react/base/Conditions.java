@@ -1,6 +1,6 @@
 package coolsquid.react.base;
 
-import static coolsquid.react.api.EventManager.registerCondition;
+import static coolsquid.react.api.event.EventManager.registerCondition;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.util.DamageSource;

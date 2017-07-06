@@ -14,8 +14,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
 
-import coolsquid.react.api.Action;
-import coolsquid.react.api.Variable;
+import coolsquid.react.api.event.Action;
+import coolsquid.react.api.event.Variable;
 import coolsquid.react.event.InternalEventManager;
 import coolsquid.react.util.Log;
 import coolsquid.react.util.WarningHandler;

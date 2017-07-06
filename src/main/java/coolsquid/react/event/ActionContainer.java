@@ -2,7 +2,7 @@ package coolsquid.react.event;
 
 import java.util.Map;
 
-import coolsquid.react.api.Action;
+import coolsquid.react.api.event.Action;
 
 public class ActionContainer {
 

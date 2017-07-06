@@ -19,11 +19,11 @@ import com.google.common.collect.SetMultimap;
 
 import coolsquid.react.ConfigManager;
 import coolsquid.react.React;
-import coolsquid.react.api.Action;
-import coolsquid.react.api.Condition;
-import coolsquid.react.api.Target;
-import coolsquid.react.api.TargetCondition;
-import coolsquid.react.api.Variable;
+import coolsquid.react.api.event.Action;
+import coolsquid.react.api.event.Condition;
+import coolsquid.react.api.event.Target;
+import coolsquid.react.api.event.TargetCondition;
+import coolsquid.react.api.event.Variable;
 import coolsquid.react.util.Log;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;

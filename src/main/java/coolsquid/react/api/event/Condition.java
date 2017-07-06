@@ -1,4 +1,4 @@
-package coolsquid.react.api;
+package coolsquid.react.api.event;
 
 import java.util.Map;
 

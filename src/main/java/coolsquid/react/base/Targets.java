@@ -1,7 +1,7 @@
 package coolsquid.react.base;
 
-import static coolsquid.react.api.EventManager.registerTarget;
-import static coolsquid.react.api.EventManager.registerTargetCondition;
+import static coolsquid.react.api.event.EventManager.registerTarget;
+import static coolsquid.react.api.event.EventManager.registerTargetCondition;
 
 import java.util.Collections;
 
@@ -16,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import coolsquid.react.api.TargetCondition;
+import coolsquid.react.api.event.TargetCondition;
 
 public class Targets {
 

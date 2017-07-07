@@ -3,12 +3,15 @@ package coolsquid.react.base;
 
 import static coolsquid.react.api.event.EventManager.registerAction;
 
+import java.util.EnumSet;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketPlayerPosLook;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -99,7 +102,16 @@ public class Actions {
 			double x = Util.getRelativeNumber(parameters.get("x"), target.posX);
 			double y = Util.getRelativeNumber(parameters.get("y"), target.posY);
 			double z = Util.getRelativeNumber(parameters.get("z"), target.posZ);
-			target.setPosition(x, y, z);
+			if (target instanceof EntityPlayerMP) {
+				((EntityPlayerMP) target).connection.setPlayerLocation(x, y, z, target.rotationYaw,
+						target.rotationPitch, EnumSet.noneOf(SPacketPlayerPosLook.EnumFlags.class));
+			} else {
+				target.setPosition(x, y, z);
+			}
+			if (!(target instanceof EntityLivingBase) || !((EntityLivingBase) target).isElytraFlying()) {
+				target.motionY = 0;
+				target.onGround = true;
+			}
 		}, "x", "y", "z");
 
 		registerAction("cancel", (event, target, parameters) -> {

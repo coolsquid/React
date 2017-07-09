@@ -2,6 +2,8 @@ package coolsquid.react;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -20,18 +23,23 @@ import coolsquid.react.event.InternalEventManager;
 import coolsquid.react.util.Log;
 import coolsquid.react.util.WarningHandler;
 
+import org.apache.commons.io.FileUtils;
+
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigOrigin;
+import com.typesafe.config.ConfigRenderOptions;
 import com.typesafe.config.ConfigValue;
+import com.typesafe.config.ConfigValueFactory;
 import com.typesafe.config.ConfigValueType;
 
 public class ConfigManager {
 
-	public static final File CONFIG_DIRECTORY = new File("./config/react");
-	public static final FilenameFilter CONFIG_FILE_FILTER = (file, name) -> file.isDirectory()
-			|| name.endsWith(".conf");
+	public static final File CONFIG_DIRECTORY = new File(Loader.instance().getConfigDir(), "react");
+	public static final File MOD_CONFIG_FILE = new File(CONFIG_DIRECTORY, "react.conf");
+	public static final FilenameFilter CONFIG_FILE_FILTER = (file,
+			name) -> (file.isDirectory() || name.endsWith(".conf")) && !file.equals(MOD_CONFIG_FILE);
 
 	public static final String NEGATIVE_PREFIX = "-";
 
@@ -43,6 +51,27 @@ public class ConfigManager {
 		InternalEventManager.LISTENERS.clear();
 		if (!CONFIG_DIRECTORY.exists()) {
 			CONFIG_DIRECTORY.mkdirs();
+		}
+		if (MOD_CONFIG_FILE.exists()) {
+			Config config = ConfigFactory.parseFile(MOD_CONFIG_FILE);
+			if (config.hasPath("sync")) {
+				if (FMLCommonHandler.instance().getSide() == Side.SERVER) {
+					syncConfigs = config.getBoolean("sync");
+				} else {
+					Log.warn("%s:%s: The sync config option is only available on servers.", config.origin().filename(),
+							config.origin().lineNumber());
+				}
+			}
+		} else {
+			Config config = ConfigFactory.empty().withValue("sync", ConfigValueFactory.fromAnyRef(false,
+					"Whether to sync configurations between the server and the client. Serverside only, has no effect on the client. Enabled by default."));
+			try {
+				FileUtils.write(MOD_CONFIG_FILE, config.root().render(ConfigRenderOptions.defaults().setJson(false)),
+						StandardCharsets.UTF_8);
+			} catch (IOException e) {
+				Log.error("Could not write mod config to file");
+				Log.catching(e);
+			}
 		}
 		load(CONFIG_DIRECTORY);
 		if (errorCount > 0 && FMLCommonHandler.instance().getSide() == Side.CLIENT) {
@@ -129,14 +158,6 @@ public class ConfigManager {
 						errorCount++;
 					}
 				}
-			}
-		}
-		if (root.hasPath("sync")) {
-			if (FMLCommonHandler.instance().getSide() == Side.SERVER) {
-				syncConfigs = root.getBoolean("sync");
-			} else {
-				Log.warn("%s:%s: The sync config option is only available on servers.", root.origin().filename(),
-						root.origin().lineNumber());
 			}
 		}
 	}

@@ -65,6 +65,12 @@ public class Targets {
 				list.add(tamer);
 			}
 		}, "tamer");
+		registerTarget("mounted_mob", (event, variables, list) -> {
+			Object mounted = variables.get("mounted_mob");
+			if (mounted != null) {
+				list.add(mounted);
+			}
+		}, "mounted_mob");
 	}
 
 	public static void registerTargetConditions() {

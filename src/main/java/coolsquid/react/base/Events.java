@@ -15,6 +15,7 @@ import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -66,6 +67,10 @@ public class Events {
 		registerEvent("mob_fall", LivingFallEvent.class);
 		registerEvent("mob_heal", LivingHealEvent.class);
 		registerEvent("mob_jump", LivingJumpEvent.class);
+
+		registerEvent("mob_mount", EntityMountEvent.class, (event) -> event.isMounting());
+		registerEvent("mob_dismount", EntityMountEvent.class, (event) -> event.isDismounting());
+		registerVariable(EntityMountEvent.class, "mounted_mob", (event) -> event.getEntityBeingMounted());
 
 		registerEvent("mob_spawn", LivingSpawnEvent.SpecialSpawn.class);
 

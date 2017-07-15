@@ -7,7 +7,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import coolsquid.react.ConfigManager;
-import coolsquid.react.event.InternalEventManager;
 
 import com.typesafe.config.ConfigFactory;
 
@@ -44,7 +43,6 @@ public class PacketConfig implements IMessage {
 		@Override
 		public IMessage onMessage(PacketConfig message, MessageContext ctx) {
 			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-				InternalEventManager.LISTENERS.clear();
 				ConfigManager.load(ConfigFactory.parseString(new String(message.config)));
 				hasServerConfigs = true;
 			}

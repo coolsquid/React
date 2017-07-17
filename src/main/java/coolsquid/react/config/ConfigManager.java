@@ -1,9 +1,7 @@
-package coolsquid.react;
+package coolsquid.react.config;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,18 +18,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import coolsquid.react.api.event.Action;
 import coolsquid.react.api.event.Variable;
 import coolsquid.react.event.InternalEventManager;
+import coolsquid.react.integration.Integration;
 import coolsquid.react.util.Log;
 import coolsquid.react.util.WarningHandler;
-
-import org.apache.commons.io.FileUtils;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigOrigin;
-import com.typesafe.config.ConfigRenderOptions;
 import com.typesafe.config.ConfigValue;
-import com.typesafe.config.ConfigValueFactory;
 import com.typesafe.config.ConfigValueType;
 
 public class ConfigManager {
@@ -48,32 +43,31 @@ public class ConfigManager {
 	private static int errorCount = 0;
 
 	public static void load() {
-		InternalEventManager.LISTENERS.clear();
-		if (!CONFIG_DIRECTORY.exists()) {
-			CONFIG_DIRECTORY.mkdirs();
+		load(CONFIG_DIRECTORY, true);
+	}
+
+	public static void load(File configDir, boolean reset) {
+		if (reset) {
+			InternalEventManager.LISTENERS.clear();
 		}
-		if (MOD_CONFIG_FILE.exists()) {
-			Config config = ConfigFactory.parseFile(MOD_CONFIG_FILE);
-			if (config.hasPath("sync")) {
-				if (FMLCommonHandler.instance().getSide() == Side.SERVER) {
-					syncConfigs = config.getBoolean("sync");
-				} else {
-					Log.warn("%s:%s: The sync config option is only available on servers.", config.origin().filename(),
-							config.origin().lineNumber());
-				}
-			}
-		} else {
-			Config config = ConfigFactory.empty().withValue("sync", ConfigValueFactory.fromAnyRef(false,
-					"Whether to sync configurations between the server and the client. Serverside only, has no effect on the client. Enabled by default."));
-			try {
-				FileUtils.write(MOD_CONFIG_FILE, config.root().render(ConfigRenderOptions.defaults().setJson(false)),
-						StandardCharsets.UTF_8);
-			} catch (IOException e) {
-				Log.error("Could not write mod config to file");
-				Log.catching(e);
+		if (!configDir.exists()) {
+			configDir.mkdirs();
+		}
+		if (!configDir.isDirectory() || !configDir.canRead()) {
+			throw new IllegalArgumentException("The config directory has to be a readable directory");
+		}
+		ConfigWrapper config = new ConfigWrapper(MOD_CONFIG_FILE);
+		syncConfigs = config.getBoolean("sync", true);
+		ConfigWrapper cat1 = config.getConfig("integrations");
+		for (Integration i : Integration.INTEGRATIONS) {
+			if (cat1.getBoolean(i.getModID(), false) && Loader.isModLoaded(i.getModID())) {
+				i.enable();
+			} else {
+				i.disable();
 			}
 		}
-		load(CONFIG_DIRECTORY);
+		config.save();
+		loadFile(configDir);
 		if (errorCount > 0 && FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 			WarningHandler.registerWarning(errorCount);
 		}
@@ -81,17 +75,17 @@ public class ConfigManager {
 		InternalEventManager.setupEvents();
 	}
 
-	public static void load(File file) {
+	public static void loadFile(File file) {
 		if (file.isDirectory()) {
 			for (File file2 : file.listFiles((f, n) -> n.endsWith(".conf") || f.isDirectory())) {
-				load(file2);
+				loadFile(file2);
 			}
 		} else if (CONFIG_FILE_FILTER.accept(file, file.getName())) {
 			Log.info("Loading scripts from file %s", file.getName());
 			try {
 				long time = System.nanoTime();
 				int errorCount2 = errorCount;
-				load(ConfigFactory.parseFile(file));
+				loadConfig(ConfigFactory.parseFile(file));
 				if (errorCount2 == errorCount) {
 					Log.info("Successfully loaded scripts from file %s. Loading took %s seconds.", file.getName(),
 							NumberFormat.getNumberInstance(Locale.UK).format((System.nanoTime() - time) / 1000000000D));
@@ -109,7 +103,7 @@ public class ConfigManager {
 		}
 	}
 
-	public static void load(Config root) {
+	public static void loadConfig(Config root) {
 		if (root.hasPath("disable")) {
 			if (root.getBoolean("disable")) {
 				return;

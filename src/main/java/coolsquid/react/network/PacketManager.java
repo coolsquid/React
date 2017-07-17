@@ -10,8 +10,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-import coolsquid.react.ConfigManager;
 import coolsquid.react.React;
+import coolsquid.react.config.ConfigManager;
 import coolsquid.react.util.Log;
 
 import org.apache.commons.io.FileUtils;
@@ -27,33 +27,43 @@ public class PacketManager {
 	}
 
 	public static void sendConfigsToClient(EntityPlayer player) {
-		if (ConfigManager.syncConfigs && FMLCommonHandler.instance().getSide() == Side.SERVER) {
-			if (player == null) {
-				Log.info("Sending configurations to %s clients",
-						FMLCommonHandler.instance().getMinecraftServerInstance().getCurrentPlayerCount());
-				INSTANCE.sendToAll(new PacketClean());
-				for (File file : ConfigManager.CONFIG_DIRECTORY.listFiles(ConfigManager.CONFIG_FILE_FILTER)) {
-					try {
-						INSTANCE.sendToAll(new PacketConfig(FileUtils.readFileToByteArray(file)));
-					} catch (IOException e) {
-						Log.error("Exception while reading file %s", file.getName());
-						Log.catching(e);
+		sendConfigsToClient(player, ConfigManager.CONFIG_DIRECTORY);
+	}
+
+	public static void sendConfigsToClient(EntityPlayer player, File... directories) {
+		if (player == null) {
+			INSTANCE.sendToAll(new PacketClean());
+		} else {
+			INSTANCE.sendTo(new PacketClean(), (EntityPlayerMP) player);
+		}
+		for (File configDir : directories) {
+			if (ConfigManager.syncConfigs && FMLCommonHandler.instance().getSide() == Side.SERVER) {
+				if (player == null) {
+					Log.info("Sending configurations to %s clients",
+							FMLCommonHandler.instance().getMinecraftServerInstance().getCurrentPlayerCount());
+					for (File file : configDir.listFiles(ConfigManager.CONFIG_FILE_FILTER)) {
+						try {
+							INSTANCE.sendToAll(new PacketConfig(FileUtils.readFileToByteArray(file)));
+						} catch (IOException e) {
+							Log.error("Exception while reading file %s", file.getName());
+							Log.catching(e);
+						}
 					}
-				}
-				INSTANCE.sendToAll(new PacketReload());
-			} else {
-				Log.info("Sending configurations to player %s (%s)", player.getName(),
-						player.getCachedUniqueIdString());
-				INSTANCE.sendTo(new PacketClean(), (EntityPlayerMP) player);
-				for (File file : ConfigManager.CONFIG_DIRECTORY.listFiles(ConfigManager.CONFIG_FILE_FILTER)) {
-					try {
-						INSTANCE.sendTo(new PacketConfig(FileUtils.readFileToByteArray(file)), (EntityPlayerMP) player);
-					} catch (IOException e) {
-						Log.error("Exception while reading file %s", file.getName());
-						Log.catching(e);
+					INSTANCE.sendToAll(new PacketReload());
+				} else {
+					Log.info("Sending configurations to player %s (%s)", player.getName(),
+							player.getCachedUniqueIdString());
+					for (File file : configDir.listFiles(ConfigManager.CONFIG_FILE_FILTER)) {
+						try {
+							INSTANCE.sendTo(new PacketConfig(FileUtils.readFileToByteArray(file)),
+									(EntityPlayerMP) player);
+						} catch (IOException e) {
+							Log.error("Exception while reading file %s", file.getName());
+							Log.catching(e);
+						}
 					}
+					INSTANCE.sendTo(new PacketReload(), (EntityPlayerMP) player);
 				}
-				INSTANCE.sendTo(new PacketReload(), (EntityPlayerMP) player);
 			}
 		}
 	}

@@ -24,8 +24,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.ClickEvent;
 
-import coolsquid.react.ConfigManager;
 import coolsquid.react.api.event.TargetCondition;
+import coolsquid.react.config.ConfigManager;
 import coolsquid.react.event.InternalEventManager;
 import coolsquid.react.network.PacketManager;
 

@@ -20,6 +20,7 @@ import coolsquid.react.base.Actions;
 import coolsquid.react.base.Conditions;
 import coolsquid.react.base.Events;
 import coolsquid.react.base.Targets;
+import coolsquid.react.config.ConfigManager;
 import coolsquid.react.network.PacketConfig;
 import coolsquid.react.network.PacketManager;
 import coolsquid.react.util.CommandReact;

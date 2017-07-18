@@ -168,15 +168,15 @@ public class CommandReact extends CommandBase {
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
 			BlockPos targetPos) {
 		switch (args.length) {
-		case 1:
-			return filter(args[0], "reload", "dump");
-		default:
-			if (args[0].equals("dump")) {
-				return filter(args[args.length - 1], "items", "blocks", "actions", "conditions", "targets",
-						"target_conditions", "events");
-			} else {
-				return Collections.emptyList();
-			}
+			case 1:
+				return filter(args[0], "reload", "dump");
+			default:
+				if (args[0].equals("dump")) {
+					return filter(args[args.length - 1], "items", "blocks", "actions", "conditions", "targets",
+							"target_conditions", "events");
+				} else {
+					return Collections.emptyList();
+				}
 		}
 	}
 

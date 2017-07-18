@@ -12,19 +12,6 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.SetMultimap;
-
-import coolsquid.react.React;
-import coolsquid.react.api.event.Action;
-import coolsquid.react.api.event.Condition;
-import coolsquid.react.api.event.Target;
-import coolsquid.react.api.event.TargetCondition;
-import coolsquid.react.api.event.Variable;
-import coolsquid.react.config.ConfigManager;
-import coolsquid.react.util.Log;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -35,6 +22,20 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
+
+import coolsquid.react.React;
+import coolsquid.react.api.event.Action;
+import coolsquid.react.api.event.Condition;
+import coolsquid.react.api.event.Target;
+import coolsquid.react.api.event.TargetCondition;
+import coolsquid.react.api.event.Variable;
+import coolsquid.react.config.ConfigManager;
+import coolsquid.react.util.Log;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.SetMultimap;
 
 public class InternalEventManager {
 

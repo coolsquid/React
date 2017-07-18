@@ -31,6 +31,9 @@ public class PacketManager {
 	}
 
 	public static void sendConfigsToClient(EntityPlayer player, File... directories) {
+		if (FMLCommonHandler.instance().getSide() != Side.SERVER) {
+			return;
+		}
 		if (player == null) {
 			INSTANCE.sendToAll(new PacketClean());
 		} else {

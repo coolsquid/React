@@ -39,6 +39,7 @@ public class ConfigManager {
 	public static final String NEGATIVE_PREFIX = "-";
 
 	public static boolean syncConfigs = true;
+	public static boolean debug = false;
 
 	private static int errorCount = 0;
 
@@ -58,6 +59,7 @@ public class ConfigManager {
 		}
 		ConfigWrapper config = new ConfigWrapper(MOD_CONFIG_FILE);
 		syncConfigs = config.getBoolean("sync", true);
+		debug = config.getBoolean("debug", false);
 		ConfigWrapper cat1 = config.getConfig("integrations");
 		for (Integration i : Integration.INTEGRATIONS) {
 			if (cat1.getBoolean(i.getModID(), false) && Loader.isModLoaded(i.getModID())) {
@@ -104,10 +106,8 @@ public class ConfigManager {
 	}
 
 	public static void loadConfig(Config root) {
-		if (root.hasPath("disable")) {
-			if (root.getBoolean("disable")) {
-				return;
-			}
+		if (root.hasPath("disable") && root.getBoolean("disable")) {
+			return;
 		}
 		for (Entry<String, ConfigValue> e : root.entrySet()) {
 			if (!InternalEventManager.LISTENER_TYPES.containsKey(e.getKey())

@@ -62,13 +62,24 @@ public class InternalEventManager {
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onEvent(Event event) {
 		List<ActionContainer> actionContainers = LISTENERS.get(event.getClass());
+		if (ConfigManager.debug) {
+			Log.debug("Received event %s", event.getClass().getName());
+			Log.debug("Found %s action containers", actionContainers.size());
+		}
 		if (!actionContainers.isEmpty()) {
 			Predicate eventPredicate = EVENT_PREDICATES.get(event.getClass());
 			if (eventPredicate != null && !eventPredicate.test(event)) {
+				if (ConfigManager.debug) {
+					Log.debug("Actions will not fire, as the internal requirements have not been met");
+				}
 				return;
 			}
 			actionLoop: for (ActionContainer actionContainer : actionContainers) {
 				Action action = actionContainer.action;
+				if (ConfigManager.debug) {
+					Log.debug("Preparing action %s", actionContainer.action);
+					Log.debug("Constructing variables");
+				}
 				Map<String, Object> variables = new HashMap<>();
 				for (Class c = event.getClass(); c != Event.class; c = c.getSuperclass()) {
 					Map<String, Variable<?, ?>> map = VARIABLES.get(c);
@@ -81,7 +92,13 @@ public class InternalEventManager {
 						});
 					}
 				}
+				if (ConfigManager.debug) {
+					Log.debug("Checking conditions");
+				}
 				conditionLoop: for (Entry<String, Object> conditionEntry : actionContainer.conditions.entrySet()) {
+					if (ConfigManager.debug) {
+						Log.debug("Checking condition %s", conditionEntry.getKey());
+					}
 					if (conditionEntry.getKey().contains(".")) {
 						String[] conditionParts = conditionEntry.getKey().split("\\.");
 						String conditionTargetKey = conditionParts[0];
@@ -92,6 +109,10 @@ public class InternalEventManager {
 						}
 						for (String requiredVar : TARGETS_REQUIRED_VARS.get(conditionTargetKey)) {
 							if (!variables.containsKey(requiredVar)) {
+								if (ConfigManager.debug) {
+									Log.debug(
+											"Variable %s, required by condition %s, is missing. The condition will be ignored.");
+								}
 								continue conditionLoop;
 							}
 						}
@@ -99,20 +120,32 @@ public class InternalEventManager {
 						List conditionTargetList = new ArrayList<>();
 						conditionTarget.get(event, variables, conditionTargetList);
 						if (conditionTargetList.isEmpty()) {
+							if (ConfigManager.debug) {
+								Log.debug("No target objects for target %s found, skipping");
+							}
 							continue actionLoop;
 						}
 						for (Object conditionTargetObj : conditionTargetList) {
 							for (Class<?> c = conditionTargetObj.getClass(); c != Object.class; c = c.getSuperclass()) {
 								Map<String, TargetCondition<?, ?>> map = TARGET_CONDITIONS.get(c);
 								if (map == null) {
+									if (ConfigManager.debug) {
+										Log.debug("No such target condition %s, continuing", c.getName());
+									}
 									continue;
 								}
 								TargetCondition tc = map.get(conditionKey);
 								if (tc != null) {
 									boolean passed = tc.allow(conditionTargetObj, conditionEntry.getValue());
 									if (passed && negative) {
+										if (ConfigManager.debug) {
+											Log.debug("Condition %s not met, skipping", conditionEntry.getKey());
+										}
 										continue actionLoop;
 									} else if (!passed && !negative) {
+										if (ConfigManager.debug) {
+											Log.debug("Condition %s not met, skipping", conditionEntry.getKey());
+										}
 										continue actionLoop;
 									}
 								}
@@ -126,28 +159,50 @@ public class InternalEventManager {
 						}
 						for (String requiredVar : CONDITIONS_REQUIRED_VARS.get(conditionKey)) {
 							if (!variables.containsKey(requiredVar)) {
+								if (ConfigManager.debug) {
+									Log.debug("Variable %s, required by condition %s, is missing. Skipping.",
+											conditionEntry.getKey());
+								}
 								continue actionLoop;
 							}
 						}
 						Condition condition = CONDITIONS.get(conditionKey);
 						boolean passed = condition.allow(event, variables, conditionEntry.getValue());
 						if (passed && negative) {
+							if (ConfigManager.debug) {
+								Log.debug("Condition %s not met, skipping", conditionEntry.getKey());
+							}
 							continue actionLoop;
 						} else if (!passed && !negative) {
+							if (ConfigManager.debug) {
+								Log.debug("Condition %s not met, skipping", conditionEntry.getKey());
+							}
 							continue actionLoop;
 						}
 					}
 				}
+				if (ConfigManager.debug) {
+					Log.debug("Inserting variables");
+				}
 				Map<String, Object> parameters = actionContainer.parameters;
 				insertVariables(parameters, variables);
 				if (!actionContainer.target.isEmpty()) {
+					if (ConfigManager.debug) {
+						Log.debug("Found target %s", actionContainer.target);
+					}
 					for (String requiredVar : TARGETS_REQUIRED_VARS.get(actionContainer.target)) {
 						if (!variables.containsKey(requiredVar)) {
+							if (ConfigManager.debug) {
+								Log.debug("Missing variable %s for target, skipping", requiredVar);
+							}
 							continue actionLoop;
 						}
 					}
 					Target target = TARGETS.get(actionContainer.target);
 					if (target == null) {
+						if (ConfigManager.debug) {
+							Log.debug("Target is null, skipping");
+						}
 						continue actionLoop;
 					}
 					List targetList = new ArrayList<>();
@@ -171,10 +226,16 @@ public class InternalEventManager {
 									boolean passed = tc.allow(in, tcm.getValue());
 									if (passed && negative) {
 										i.remove();
+										if (ConfigManager.debug) {
+											Log.debug("Target object %s was removed by filter %s", in, key);
+										}
 										continue l2;
 									}
 									if (!passed && !negative) {
 										i.remove();
+										if (ConfigManager.debug) {
+											Log.debug("Target object %s was removed by filter %s", in, key);
+										}
 										continue l2;
 									}
 								}
@@ -182,6 +243,9 @@ public class InternalEventManager {
 						}
 					}
 					for (Object x : targetList) {
+						if (ConfigManager.debug) {
+							Log.debug("Executing action on target object %s", x);
+						}
 						try {
 							action.execute(event, x, parameters);
 						} catch (Exception e1) {
@@ -190,6 +254,10 @@ public class InternalEventManager {
 						}
 					}
 				} else {
+					if (ConfigManager.debug) {
+						Log.debug("No target, going straight to execution");
+						Log.debug("Executing action");
+					}
 					try {
 						action.execute(event, null, parameters);
 					} catch (Exception e1) {
@@ -250,6 +318,9 @@ public class InternalEventManager {
 
 	public static void registerListener(Class<? extends Event> eventType, Action<?> action, String target,
 			Map<String, Object> parameters, Map<String, Object> conditions, Map<String, Object> targetConditions) {
+		if (ConfigManager.debug) {
+			Log.debug("Registering listener for event %s", eventType.getName());
+		}
 		LISTENERS.put(eventType, new ActionContainer(action, target, parameters, conditions, targetConditions));
 	}
 

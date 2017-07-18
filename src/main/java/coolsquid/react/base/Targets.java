@@ -71,6 +71,12 @@ public class Targets {
 				list.add(mounted);
 			}
 		}, "mounted_mob");
+		registerTarget("interaction_target", (event, variables, list) -> {
+			Object target = variables.get("interaction_target");
+			if (target != null) {
+				list.add(target);
+			}
+		}, "interaction_target");
 	}
 
 	public static void registerTargetConditions() {

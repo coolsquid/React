@@ -14,10 +14,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
@@ -127,6 +129,8 @@ public class Actions {
 			if (event instanceof PlayerSleepInBedEvent) {
 				((PlayerSleepInBedEvent) event).setResult(SleepResult.OTHER_PROBLEM);
 				success = true;
+			} else if (event instanceof PlayerInteractEvent) {
+				((PlayerInteractEvent) event).setCancellationResult(EnumActionResult.SUCCESS);
 			}
 			if (!success) {
 				Log.error("Tried to cancel uncancelable event %s", event.getClass().getName());

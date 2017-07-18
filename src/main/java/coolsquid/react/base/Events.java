@@ -26,6 +26,7 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.terraingen.SaplingGrowTreeEvent;
@@ -82,6 +83,14 @@ public class Events {
 		registerEvent("player_log_in", PlayerLoggedInEvent.class);
 		registerEvent("player_log_out", PlayerLoggedOutEvent.class);
 		registerEvent("player_respawn", PlayerRespawnEvent.class, (event) -> !event.isEndConquered());
+
+		registerEvent("interact_with_entity", PlayerInteractEvent.EntityInteractSpecific.class);
+		registerVariable(PlayerInteractEvent.EntityInteractSpecific.class, "interaction_target",
+				(event) -> event.getTarget());
+
+		registerEvent("left_click_block", PlayerInteractEvent.LeftClickBlock.class);
+		registerEvent("right_click_block", PlayerInteractEvent.RightClickBlock.class);
+		registerEvent("right_click_item", PlayerInteractEvent.RightClickItem.class);
 
 		registerVariable(EntityJoinWorldEvent.class, "mob", (event) -> {
 			if (event.getEntity() instanceof EntityLivingBase) {

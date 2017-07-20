@@ -144,6 +144,8 @@ public class Events {
 
 		registerVariable(BlockEvent.class, "world", (event) -> event.getWorld());
 		registerVariable(BlockEvent.class, "block", (event) -> event.getState().getBlock());
+		registerVariable(BlockEvent.BreakEvent.class, "mob", (event) -> event.getPlayer());
+		registerVariable(BlockEvent.PlaceEvent.class, "mob", (event) -> event.getPlayer());
 		registerEvent("block_break", BlockEvent.BreakEvent.class);
 		registerEvent("block_place", BlockEvent.PlaceEvent.class);
 		registerEvent("crop_grow", CropGrowEvent.Pre.class);

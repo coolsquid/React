@@ -31,11 +31,20 @@ sourceSets {
 	}
 }
 
+Properties keyProperties = new Properties()
+File propsFile = new File('key.properties')
+if (propsFile.exists()) {
+	keyProperties.load(propsFile.newDataInputStream())
+}
+
 // set forge version and mappings
 minecraft {
 	version = project.mcVersion + "-" + project.forgeVersion
 	runDir = "run"
 	mappings = project.mappings
+
+	replaceIn "React.java"
+	replace '@FINGERPRINT@', keyProperties.certificateFingerprint
 }
 
 // include all files in /libs as dependencies
@@ -77,10 +86,7 @@ task devJar(type: Jar) {
 task signJar(type: SignJar, dependsOn: reobfJar) {
 	inputFile = jar.archivePath
 	outputFile = jar.archivePath
-	Properties keyProperties = new Properties()
-	File propsFile = new File('key.properties')
 	if (propsFile.exists()) {
-		keyProperties.load(propsFile.newDataInputStream())
 		keyStore = keyProperties.keyStore;
 		alias = keyProperties.alias;
 		storePass = keyProperties.storePass;

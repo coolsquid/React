@@ -30,19 +30,19 @@ public class Log {
 	}
 
 	public static void error(String message, Object... args) {
-		log(Level.ERROR, message, args);
+		log(true, Level.ERROR, message, args);
 	}
 
 	public static void warn(String message, Object... args) {
-		log(Level.WARN, message, args);
+		log(true, Level.WARN, message, args);
 	}
 
 	public static void info(String message, Object... args) {
-		log(Level.INFO, message, args);
+		log(true, Level.INFO, message, args);
 	}
 
 	public static void debug(String message, Object... args) {
-		log(Level.DEBUG, message, args);
+		log(true, Level.DEBUG, message, args);
 	}
 
 	public static void catching(Throwable t) {
@@ -58,9 +58,11 @@ public class Log {
 		}
 	}
 
-	private static void log(Level level, String message, Object[] args) {
+	public static void log(boolean log4j, Level level, String message, Object... args) {
 		String formattedMessage = args.length > 0 ? String.format(message, args) : message;
-		LOG4J.log(level, formattedMessage);
+		if (log4j) {
+			LOG4J.log(level, formattedMessage);
+		}
 		if (LOG != null) {
 			try {
 				LOG.write("[");

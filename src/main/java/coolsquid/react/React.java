@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -26,15 +27,18 @@ import coolsquid.react.network.PacketManager;
 import coolsquid.react.util.CommandReact;
 import coolsquid.react.util.Log;
 
-@Mod(modid = React.MODID, name = React.NAME, version = React.VERSION, dependencies = React.DEPENDENCIES, updateJSON = React.UPDATE_JSON_URL)
+import org.apache.logging.log4j.Level;
+
+@Mod(modid = React.MODID, name = React.NAME, version = React.VERSION, dependencies = React.DEPENDENCIES, updateJSON = React.UPDATE_JSON_URL, certificateFingerprint = React.CERTIFICATE_FINGERPRINT)
 public class React {
 
 	public static final String MODID = "react";
 	public static final String NAME = "React";
-	public static final String VERSION = "0.1.2";
+	public static final String VERSION = "1.0.0";
 	public static final String DEPENDENCIES = "required-after:forge@[14.21.1.2387,)";
 	public static final String UPDATE_JSON_URL = "https://coolsquid.me/api/version/react.json";
 	public static final String ISSUE_TRACKER_URL = "https://github.com/coolsquid/React/issues";
+	public static final String CERTIFICATE_FINGERPRINT = "@FINGERPRINT@";
 
 	@Mod.EventHandler
 	public void onPreInit(FMLPreInitializationEvent event) {
@@ -83,5 +87,12 @@ public class React {
 															// React version as the server
 		}
 		return true;
+	}
+
+	@Mod.EventHandler
+	public void onFingerprintViolation(FMLFingerprintViolationEvent event) {
+		Log.log(false, Level.WARN,
+				"The mod react is expecting signature %s for source %s, however there is no signature matching that description",
+				event.getExpectedFingerprint(), event.getSource().getName());
 	}
 }

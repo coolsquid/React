@@ -73,7 +73,7 @@ public class Targets {
 		}, "mounted_mob");
 		registerTarget("interaction_target", (event, variables, list) -> {
 			Object target = variables.get("interaction_target");
-			if (target != null) {
+			if (target instanceof EntityLivingBase) {
 				list.add(target);
 			}
 		}, "interaction_target");

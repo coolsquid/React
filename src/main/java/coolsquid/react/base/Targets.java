@@ -90,8 +90,11 @@ public class Targets {
 			return e != null && e.getCachedUniqueIdString().equals(expected);
 		}, EntityLivingBase.class);
 		registerTargetCondition("held_item", (TargetCondition<EntityLivingBase, String>) (target, expected) -> {
-			ItemStack heldItem = target.getActiveItemStack();
-			if (heldItem.isEmpty()) {
+			if (target.getActiveHand() == null) {
+				return expected.equals("none");
+			}
+			ItemStack heldItem = target.getHeldItem(target.getActiveHand());
+			if (heldItem == null || heldItem.isEmpty()) {
 				return expected.equals("none");
 			} else {
 				return heldItem.getItem().getRegistryName().toString().matches(expected);

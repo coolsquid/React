@@ -39,6 +39,8 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import coolsquid.react.util.BlockWrapper;
+
 public class Events {
 
 	public static void register() {
@@ -139,11 +141,14 @@ public class Events {
 
 		registerVariable(WorldEvent.class, "world", (event) -> event.getWorld());
 		registerEvent("sapling_grow", SaplingGrowTreeEvent.class);
+		//registerVariable(SaplingGrowTreeEvent.class, "block",
+		//		(event) -> event.getWorld().getBlockState(event.getPos()));
 		registerVariable(SaplingGrowTreeEvent.class, "block",
-				(event) -> event.getWorld().getBlockState(event.getPos()).getBlock());
+				(event) -> new BlockWrapper(event.getWorld().getBlockState(event.getPos()), event.getPos()));
 
 		registerVariable(BlockEvent.class, "world", (event) -> event.getWorld());
-		registerVariable(BlockEvent.class, "block", (event) -> event.getState().getBlock());
+		//registerVariable(BlockEvent.class, "block", (event) -> event.getState());
+		registerVariable(BlockEvent.class, "block", (event) -> new BlockWrapper(event.getState(), event.getPos()));
 		registerVariable(BlockEvent.BreakEvent.class, "mob", (event) -> event.getPlayer());
 		registerVariable(BlockEvent.PlaceEvent.class, "mob", (event) -> event.getPlayer());
 		registerEvent("block_break", BlockEvent.BreakEvent.class);

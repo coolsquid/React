@@ -28,7 +28,7 @@ public class PacketReload implements IMessage {
 		@Override
 		public IMessage onMessage(PacketReload message, MessageContext ctx) {
 			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-				Log.info("Received configs from server.");
+				Log.REACT.info("Received configs from server.");
 				InternalEventManager.setupEvents();
 			}
 			return null;

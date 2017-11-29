@@ -83,22 +83,22 @@ public class ConfigManager {
 				loadFile(file2);
 			}
 		} else if (CONFIG_FILE_FILTER.accept(file, file.getName())) {
-			Log.info("Loading scripts from file %s", file.getName());
+			Log.REACT.info("Loading scripts from file %s", file.getName());
 			try {
 				long time = System.nanoTime();
 				int errorCount2 = errorCount;
 				loadConfig(ConfigFactory.parseFile(file));
 				if (errorCount2 == errorCount) {
-					Log.info("Successfully loaded scripts from file %s. Loading took %s seconds.", file.getName(),
+					Log.REACT.info("Successfully loaded scripts from file %s. Loading took %s seconds.", file.getName(),
 							NumberFormat.getNumberInstance(Locale.UK).format((System.nanoTime() - time) / 1000000000D));
 				} else {
-					Log.info("Loaded scripts from file %s with %s errors. Loading took %s seconds.", file.getName(),
-							errorCount - errorCount2,
+					Log.REACT.info("Loaded scripts from file %s with %s errors. Loading took %s seconds.",
+							file.getName(), errorCount - errorCount2,
 							NumberFormat.getNumberInstance(Locale.UK).format((System.nanoTime() - time) / 1000000000D));
 				}
 			} catch (ConfigException e) {
-				Log.error("Exception while parsing script %s", file.getName());
-				Log.catching(e);
+				Log.REACT.error("Exception while parsing script %s", file.getName());
+				Log.REACT.catching(e);
 				errorCount++;
 				return;
 			}
@@ -146,9 +146,9 @@ public class ConfigManager {
 									conditions, targetConditions);
 						}
 					} catch (Throwable t) {
-						Log.error("Exception while loading script %s section %s.%s:", root.origin().filename(),
+						Log.REACT.error("Exception while loading script %s section %s.%s:", root.origin().filename(),
 								eventType.getKey(), i + 1);
-						Log.catching(t);
+						Log.REACT.catching(t);
 						errorCount++;
 					}
 				}
@@ -264,7 +264,7 @@ public class ConfigManager {
 			args2[i + 2] = args[i];
 		}
 		errorCount++;
-		Log.error("Error in file %s at line %s:\n" + error, args2);
+		Log.REACT.error("Error in file %s at line %s:\n" + error, args2);
 	}
 
 	private static String noQuotes(String string) {

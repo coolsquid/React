@@ -6,6 +6,7 @@ import static coolsquid.react.api.event.EventManager.registerAction;
 import java.util.EnumSet;
 import java.util.Random;
 
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import coolsquid.react.api.event.Action;
@@ -133,9 +135,34 @@ public class Actions {
 				((PlayerInteractEvent) event).setCancellationResult(EnumActionResult.SUCCESS);
 			}
 			if (!success) {
-				Log.error("Tried to cancel uncancelable event %s", event.getClass().getName());
+				Log.REACT.error("Tried to cancel uncancelable event %s", event.getClass().getName());
 			}
 		});
-		registerAction("log", (event, target, parameters) -> Log.info((String) parameters.get("message")), "message");
+		registerAction("log", (event, target, parameters) -> {
+			String logName = (String) parameters.get("log_name");
+			Integer numToRetain = (Integer) parameters.get("maximum_backups");
+			if (numToRetain == null) {
+				numToRetain = 5;
+			}
+			if (logName == null) {
+				Log.REACT.info((String) parameters.get("message"));
+			} else {
+				Log log = Log.getLog(logName);
+				if (log == null) {
+					log = new Log(logName, "logs/react/" + logName, false, numToRetain);
+				}
+				log.info((String) parameters.get("message"));
+			}
+		}, "message");
+		registerAction("command",
+				(event, target, parameters) -> FMLCommonHandler.instance().getMinecraftServerInstance()
+						.getCommandManager()
+						.executeCommand((ICommandSender) target, (String) parameters.get("command")),
+				"command");
+		registerAction("server_command",
+				(event, target, parameters) -> FMLCommonHandler.instance().getMinecraftServerInstance()
+						.getCommandManager().executeCommand(FMLCommonHandler.instance().getMinecraftServerInstance(),
+								(String) parameters.get("command")),
+				"command");
 	}
 }

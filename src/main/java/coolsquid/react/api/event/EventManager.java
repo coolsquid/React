@@ -46,4 +46,8 @@ public class EventManager {
 	public static <E extends Event> void registerVariable(Class<E> eventType, String name, Variable<?, E> variable) {
 		InternalEventManager.registerVariable(eventType, name, variable);
 	}
+
+	public static <V> void registerTargetProperty(String property, Class<V> variableType, TargetProperty<V> text) {
+		InternalEventManager.registerTargetProperty(property, variableType, text);
+	}
 }

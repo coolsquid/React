@@ -154,8 +154,8 @@ public class ConfigWrapper {
 								.render(ConfigRenderOptions.defaults().setJson(false).setOriginComments(false)),
 						StandardCharsets.UTF_8);
 			} catch (IOException e) {
-				Log.error("Could not write config to file");
-				Log.catching(e);
+				Log.REACT.error("Could not write config to file");
+				Log.REACT.catching(e);
 			}
 		}
 	}

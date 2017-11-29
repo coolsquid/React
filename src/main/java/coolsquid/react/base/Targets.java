@@ -2,21 +2,27 @@ package coolsquid.react.base;
 
 import static coolsquid.react.api.event.EventManager.registerTarget;
 import static coolsquid.react.api.event.EventManager.registerTargetCondition;
+import static coolsquid.react.api.event.EventManager.registerTargetProperty;
 
 import java.util.Collections;
+import java.util.Objects;
 
-import net.minecraft.block.Block;
+import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import coolsquid.react.api.event.TargetCondition;
+import coolsquid.react.api.event.TargetProperty;
+import coolsquid.react.util.BlockWrapper;
 
 public class Targets {
 
@@ -124,8 +130,9 @@ public class Targets {
 		registerTargetCondition("id",
 				(target, expected) -> ((Number) expected).intValue() == target.provider.getDimension(), World.class);
 
-		registerTargetCondition("name", (target, expected) -> expected.equals(target.getRegistryName().toString()),
-				Block.class);
+		registerTargetCondition("id",
+				(target, expected) -> expected.equals(target.state.getBlock().getRegistryName().toString()),
+				BlockWrapper.class);
 
 		registerTargetCondition("min_xp_level",
 				(target, expected) -> target.experienceLevel >= ((Number) expected).intValue(), EntityPlayer.class);
@@ -153,8 +160,42 @@ public class Targets {
 				EntityPlayer.class);
 	}
 
+	public static void registerTargetProperties() {
+		registerTargetProperty("name", EntityLivingBase.class,
+				(TargetProperty<EntityLivingBase>) (variable) -> variable.getName());
+		registerTargetProperty("uuid", EntityLivingBase.class,
+				(TargetProperty<EntityLivingBase>) (variable) -> variable.getCachedUniqueIdString());
+		registerTargetProperty("position", EntityLivingBase.class,
+				(TargetProperty<EntityLivingBase>) (variable) -> "[x=" + variable.posX + ",y=" + variable.posY + ",z="
+						+ variable.posZ + "]");
+		registerTargetProperty("type", EntityLivingBase.class,
+				(variable) -> variable instanceof EntityPlayer ? "minecraft:player"
+						: Objects.toString(EntityList.getKey(variable)));
+		registerTargetProperty("x_position", EntityLivingBase.class, (variable) -> String.valueOf(variable.posX));
+		registerTargetProperty("y_position", EntityLivingBase.class, (variable) -> String.valueOf(variable.posY));
+		registerTargetProperty("z_position", EntityLivingBase.class, (variable) -> String.valueOf(variable.posZ));
+
+		registerTargetProperty("ip", EntityPlayerMP.class,
+				(TargetProperty<EntityPlayerMP>) (variable) -> variable.getPlayerIP());
+
+		registerTargetProperty("id", BlockWrapper.class,
+				(variable) -> variable.state.getBlock().getRegistryName().toString());
+		registerTargetProperty("position", BlockWrapper.class, (variable) -> "[x=" + variable.pos.getX() + ",y="
+				+ variable.pos.getY() + ",z=" + variable.pos.getZ() + "]");
+		registerTargetProperty("x_position", BlockWrapper.class, (variable) -> String.valueOf(variable.pos.getX()));
+		registerTargetProperty("y_position", BlockWrapper.class, (variable) -> String.valueOf(variable.pos.getY()));
+		registerTargetProperty("z_position", BlockWrapper.class, (variable) -> String.valueOf(variable.pos.getZ()));
+
+		registerTargetProperty("name", DamageSource.class,
+				(TargetProperty<DamageSource>) (variable) -> variable.damageType);
+		registerTargetProperty("name", ICommand.class, (TargetProperty<ICommand>) (variable) -> variable.getName());
+		registerTargetProperty("list", String[].class,
+				(TargetProperty<String[]>) (variable) -> String.join(", ", variable));
+	}
+
 	public static void register() {
 		registerTargets();
 		registerTargetConditions();
+		registerTargetProperties();
 	}
 }

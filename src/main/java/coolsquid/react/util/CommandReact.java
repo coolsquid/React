@@ -153,7 +153,7 @@ public class CommandReact extends CommandBase {
 				message.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, "logs/react-dump.txt"));
 				sender.sendMessage(message);
 			} catch (Exception e) {
-				Log.catching(e);
+				Log.REACT.catching(e);
 				ITextComponent message = new TextComponentString(
 						"<React> Something went wrong. See the React log for more details.");
 				message.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, "logs/react.log"));

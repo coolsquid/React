@@ -29,7 +29,7 @@ import coolsquid.react.util.Log;
 
 import org.apache.logging.log4j.Level;
 
-@Mod(modid = React.MODID, name = React.NAME, version = React.VERSION, dependencies = React.DEPENDENCIES, updateJSON = React.UPDATE_JSON_URL, certificateFingerprint = React.CERTIFICATE_FINGERPRINT)
+@Mod(modid = React.MODID, name = React.NAME, version = React.VERSION, dependencies = React.DEPENDENCIES, updateJSON = React.UPDATE_JSON_URL)
 public class React {
 
 	public static final String MODID = "react";
@@ -42,7 +42,7 @@ public class React {
 
 	@Mod.EventHandler
 	public void onPreInit(FMLPreInitializationEvent event) {
-		Log.info("Running React v%s.", VERSION);
+		Log.REACT.info("Running React v%s.", VERSION);
 	}
 
 	@Mod.EventHandler
@@ -89,10 +89,10 @@ public class React {
 		return true;
 	}
 
-	@Mod.EventHandler
+	//@Mod.EventHandler
 	public void onFingerprintViolation(FMLFingerprintViolationEvent event) {
-		Log.log(false, Level.WARN,
-				"The mod react is expecting signature %s for source %s, however there is no signature matching that description",
+		Log.REACT.log(false, Level.WARN,
+				"The mod React is expecting signature %s for source %s, however there is no signature matching that description.",
 				event.getExpectedFingerprint(), event.getSource().getName());
 	}
 }

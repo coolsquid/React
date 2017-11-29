@@ -42,27 +42,27 @@ public class PacketManager {
 		for (File configDir : directories) {
 			if (ConfigManager.syncConfigs && FMLCommonHandler.instance().getSide() == Side.SERVER) {
 				if (player == null) {
-					Log.info("Sending configurations to %s clients",
+					Log.REACT.info("Sending configurations to %s clients",
 							FMLCommonHandler.instance().getMinecraftServerInstance().getCurrentPlayerCount());
 					for (File file : configDir.listFiles(ConfigManager.CONFIG_FILE_FILTER)) {
 						try {
 							INSTANCE.sendToAll(new PacketConfig(FileUtils.readFileToByteArray(file)));
 						} catch (IOException e) {
-							Log.error("Exception while reading file %s", file.getName());
-							Log.catching(e);
+							Log.REACT.error("Exception while reading file %s", file.getName());
+							Log.REACT.catching(e);
 						}
 					}
 					INSTANCE.sendToAll(new PacketReload());
 				} else {
-					Log.info("Sending configurations to player %s (%s)", player.getName(),
+					Log.REACT.info("Sending configurations to player %s (%s)", player.getName(),
 							player.getCachedUniqueIdString());
 					for (File file : configDir.listFiles(ConfigManager.CONFIG_FILE_FILTER)) {
 						try {
 							INSTANCE.sendTo(new PacketConfig(FileUtils.readFileToByteArray(file)),
 									(EntityPlayerMP) player);
 						} catch (IOException e) {
-							Log.error("Exception while reading file %s", file.getName());
-							Log.catching(e);
+							Log.REACT.error("Exception while reading file %s", file.getName());
+							Log.REACT.catching(e);
 						}
 					}
 					INSTANCE.sendTo(new PacketReload(), (EntityPlayerMP) player);

@@ -4,6 +4,7 @@ import static coolsquid.react.api.event.EventManager.registerCondition;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class Conditions {
@@ -31,6 +32,18 @@ public class Conditions {
 			String[] args = (String[]) variables.get("command_arguments");
 			return String.join(" ", args).matches((String) value);
 		}, "command_arguments");
+
+		registerCondition("has_variables", (event, variables, value) -> {
+			for (String s : (Iterable<String>) value) {
+				if (!variables.containsKey(s)) {
+					return false;
+				}
+			}
+			return true;
+		});
+
+		registerCondition("remote_world", (event, variables, value) -> ((World) variables.get("world")).isRemote,
+				"world");
 	}
 
 }

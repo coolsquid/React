@@ -25,7 +25,7 @@ public class Util {
 		} else if (number instanceof Number) {
 			return ((Number) number).doubleValue();
 		}
-		Log.error("Failed to parse parameter: %s", number);
+		Log.REACT.error("Failed to parse parameter: %s", number);
 		throw new RuntimeException("Failed to parse parameter");
 	}
 
@@ -37,7 +37,7 @@ public class Util {
 		} else {
 			source = Util.STATIC_DAMAGE_SOURCES.get(sourceName);
 			if (source == null) {
-				Log.error("Damage source %s was not found. Defaulting to magic.", sourceName);
+				Log.REACT.error("Damage source %s was not found. Defaulting to magic.", sourceName);
 				source = DamageSource.MAGIC;
 			}
 		}
@@ -54,8 +54,8 @@ public class Util {
 						STATIC_DAMAGE_SOURCES.put(source.damageType, source);
 					}
 				} catch (Exception e) {
-					Log.error("Could not retrieve damage source %s", field.getName());
-					Log.catching(e);
+					Log.REACT.error("Could not retrieve damage source %s", field.getName());
+					Log.REACT.catching(e);
 				}
 			}
 		}

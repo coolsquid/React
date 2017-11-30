@@ -42,8 +42,8 @@ public class Conditions {
 			return true;
 		});
 
-		registerCondition("remote_world", (event, variables, value) -> ((World) variables.get("world")).isRemote,
-				"world");
+		registerCondition("remote_world",
+				(event, variables, value) -> ((World) variables.get("world")).isRemote == (boolean) value, "world");
 	}
 
 }

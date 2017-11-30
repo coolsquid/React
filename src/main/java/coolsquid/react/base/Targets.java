@@ -13,6 +13,9 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.DamageSource;
@@ -23,6 +26,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import coolsquid.react.api.event.TargetCondition;
 import coolsquid.react.api.event.TargetProperty;
 import coolsquid.react.util.BlockWrapper;
+import coolsquid.react.util.Util;
 
 public class Targets {
 
@@ -174,6 +178,31 @@ public class Targets {
 		registerTargetProperty("x_position", EntityLivingBase.class, (variable) -> String.valueOf(variable.posX));
 		registerTargetProperty("y_position", EntityLivingBase.class, (variable) -> String.valueOf(variable.posY));
 		registerTargetProperty("z_position", EntityLivingBase.class, (variable) -> String.valueOf(variable.posZ));
+		registerTargetProperty("health", EntityLivingBase.class,
+				(TargetProperty<EntityLivingBase>) (variable) -> String.valueOf(variable.getHealth()));
+		registerTargetProperty("helmet", EntityLivingBase.class, (TargetProperty<EntityLivingBase>) (variable) -> Util
+				.getEquipmentName(EntityEquipmentSlot.HEAD, variable));
+		registerTargetProperty("chestplate", EntityLivingBase.class,
+				(TargetProperty<EntityLivingBase>) (variable) -> Util.getEquipmentName(EntityEquipmentSlot.CHEST,
+						variable));
+		registerTargetProperty("leggings", EntityLivingBase.class, (TargetProperty<EntityLivingBase>) (variable) -> Util
+				.getEquipmentName(EntityEquipmentSlot.LEGS, variable));
+		registerTargetProperty("boots", EntityLivingBase.class, (TargetProperty<EntityLivingBase>) (variable) -> Util
+				.getEquipmentName(EntityEquipmentSlot.FEET, variable));
+		registerTargetProperty("mainhand_item", EntityLivingBase.class,
+				(TargetProperty<EntityLivingBase>) (variable) -> Util.getEquipmentName(EntityEquipmentSlot.MAINHAND,
+						variable));
+		registerTargetProperty("offhand_item", EntityLivingBase.class,
+				(TargetProperty<EntityLivingBase>) (variable) -> Util.getEquipmentName(EntityEquipmentSlot.OFFHAND,
+						variable));
+		registerTargetProperty("current_item", EntityLivingBase.class,
+				(TargetProperty<EntityLivingBase>) (variable) -> {
+					Item item = variable.getHeldItem(variable.getActiveHand()).getItem();
+					if (item == Items.AIR) {
+						return null;
+					}
+					return item.getRegistryName().toString();
+				});
 
 		registerTargetProperty("ip", EntityPlayerMP.class,
 				(TargetProperty<EntityPlayerMP>) (variable) -> variable.getPlayerIP());

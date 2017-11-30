@@ -6,6 +6,10 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.util.DamageSource;
 
 public class Util {
@@ -42,6 +46,14 @@ public class Util {
 			}
 		}
 		return source;
+	}
+
+	public static String getEquipmentName(EntityEquipmentSlot slot, EntityLivingBase entity) {
+		Item item = entity.getItemStackFromSlot(slot).getItem();
+		if (item == Items.AIR) {
+			return null;
+		}
+		return item.getRegistryName().toString();
 	}
 
 	static {

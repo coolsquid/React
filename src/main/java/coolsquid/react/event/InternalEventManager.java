@@ -345,7 +345,12 @@ public class InternalEventManager {
 							if (st.isEmpty()) {
 								Log.REACT.error("Property %s for target %s was not found", parts[1], parts[0]);
 							} else if (st.size() == 1) {
-								string = string.replace(group, st.get(0));
+								String str = st.get(0);
+								if (str == null) {
+									string = string.replace(group, "null");
+								} else {
+									string = string.replace(group, str);
+								}
 							} else {
 								string = string.replace(group, "[" + String.join(", ", st) + "]");
 							}

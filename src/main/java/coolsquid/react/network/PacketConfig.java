@@ -28,7 +28,6 @@ public class PacketConfig implements IMessage {
 	public void fromBytes(ByteBuf buf) {
 		this.config = new byte[buf.readableBytes()];
 		buf.readBytes(this.config);
-		buf.release();
 	}
 
 	@Override

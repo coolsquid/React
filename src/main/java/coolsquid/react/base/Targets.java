@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
@@ -87,6 +88,13 @@ public class Targets {
 				list.add(target);
 			}
 		}, "interaction_target");
+		registerTarget("explosion", (event, variables, list) -> list.add(variables.get("explosion")), "explosion");
+		registerTarget("exploder", (event, variables, list) -> {
+			Object target = variables.get("exploder");
+			if (target instanceof EntityLivingBase) {
+				list.add(target);
+			}
+		}, "exploder");
 	}
 
 	public static void registerTargetConditions() {
@@ -162,6 +170,16 @@ public class Targets {
 		registerTargetCondition("max_saturation",
 				(target, expected) -> target.getFoodStats().getSaturationLevel() <= ((Number) expected).intValue(),
 				EntityPlayer.class);
+
+		registerTargetCondition("can_use_command", (target, expected) -> {
+			EntityPlayer player = target;
+			ICommand command = player.getServer().getCommandManager().getCommands()
+					.get(((String) expected).split(" ")[0]);
+			if (command == null || !command.checkPermission(player.getServer(), player)) {
+				return false;
+			}
+			return true;
+		}, EntityPlayer.class);
 	}
 
 	public static void registerTargetProperties() {
@@ -220,6 +238,10 @@ public class Targets {
 		registerTargetProperty("name", ICommand.class, (TargetProperty<ICommand>) (variable) -> variable.getName());
 		registerTargetProperty("list", String[].class,
 				(TargetProperty<String[]>) (variable) -> String.join(", ", variable));
+
+		registerTargetProperty("x_position", Explosion.class, (variable) -> String.valueOf(variable.getPosition().x));
+		registerTargetProperty("y_position", Explosion.class, (variable) -> String.valueOf(variable.getPosition().y));
+		registerTargetProperty("z_position", Explosion.class, (variable) -> String.valueOf(variable.getPosition().z));
 	}
 
 	public static void register() {

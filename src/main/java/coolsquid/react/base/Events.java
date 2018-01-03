@@ -4,8 +4,12 @@ package coolsquid.react.base;
 import static coolsquid.react.api.event.EventManager.registerEvent;
 import static coolsquid.react.api.event.EventManager.registerVariable;
 
+import java.util.List;
+
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -32,6 +36,7 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.terraingen.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.CropGrowEvent;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
@@ -40,6 +45,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import coolsquid.react.util.BlockWrapper;
+
+import com.google.common.collect.Lists;
 
 public class Events {
 
@@ -112,6 +119,9 @@ public class Events {
 
 		registerEvent("player_wake_up", PlayerWakeUpEvent.class);
 		registerEvent("player_sleep", PlayerSleepInBedEvent.class);
+		registerVariable(PlayerSleepInBedEvent.class, "block",
+				(event) -> new BlockWrapper(event.getEntityPlayer().world.getBlockState(event.getPos()),
+						event.getPos()));
 		registerEvent("fill_bucket", FillBucketEvent.class);
 
 		registerEvent("render_player", RenderPlayerEvent.Pre.class, Side.CLIENT);
@@ -157,5 +167,35 @@ public class Events {
 
 		registerVariable(TickEvent.WorldTickEvent.class, "world", (event) -> event.world);
 		registerEvent("world_tick", TickEvent.WorldTickEvent.class);
+
+		registerEvent("pre_explosion", ExplosionEvent.Start.class);
+		registerVariable(ExplosionEvent.class, "world", (event) -> event.getWorld());
+		registerVariable(ExplosionEvent.class, "explosion", (event) -> event.getExplosion());
+		registerVariable(ExplosionEvent.class, "exploder", (event) -> event.getExplosion().getExplosivePlacedBy());
+
+		registerEvent("explosion", ExplosionEvent.Detonate.class);
+		registerVariable(ExplosionEvent.Detonate.class, "exploding_blocks", (event) -> {
+			List<String> list = Lists.transform(event.getAffectedBlocks(), (e) -> {
+				Block block = event.getWorld().getBlockState(e).getBlock();
+				if (block == Blocks.AIR) {
+					return null;
+				}
+				return "[" + block.getRegistryName().toString() + " at " + String.valueOf(e.getX()) + ","
+						+ String.valueOf(e.getY()) + "," + String.valueOf(e.getZ()) + "]";
+			});
+			list.removeIf((e) -> e == null);
+			return list;
+		});
+		registerVariable(ExplosionEvent.Detonate.class, "exploding_mobs", (event) -> {
+			List<String> list = Lists.transform(event.getAffectedEntities(), (e) -> {
+				if (e instanceof EntityLivingBase) {
+					return "[" + e.getName() + " at " + String.valueOf(e.posX) + "," + String.valueOf(e.posY) + ","
+							+ String.valueOf(e.posZ) + "]";
+				}
+				return null;
+			});
+			list.removeIf((e) -> e == null);
+			return list;
+		});
 	}
 }

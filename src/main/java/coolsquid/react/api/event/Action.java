@@ -7,5 +7,5 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @FunctionalInterface
 public interface Action<T> {
 
-	void execute(Event event, T target, Map<String, Object> parameters);
+	void execute(Event event, T target, Map<String, Object> parameters, Map<String, Object> variables);
 }

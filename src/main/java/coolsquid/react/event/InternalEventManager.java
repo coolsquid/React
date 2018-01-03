@@ -250,7 +250,7 @@ public class InternalEventManager {
 							Log.REACT.debug("Executing action on target object %s", x);
 						}
 						try {
-							action.execute(event, x, parameters);
+							action.execute(event, x, parameters, variables);
 						} catch (Exception e1) {
 							Log.REACT.error("An exception occured while executing script");
 							Log.REACT.catching(e1);
@@ -262,7 +262,7 @@ public class InternalEventManager {
 						Log.REACT.debug("Executing action");
 					}
 					try {
-						action.execute(event, null, parameters);
+						action.execute(event, null, parameters, variables);
 					} catch (Exception e1) {
 						Log.REACT.error("An exception occured while executing script");
 						Log.REACT.catching(e1);

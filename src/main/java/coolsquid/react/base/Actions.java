@@ -6,6 +6,8 @@ import static coolsquid.react.api.event.EventManager.registerAction;
 import java.util.EnumSet;
 import java.util.Random;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,6 +19,8 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
@@ -32,23 +36,23 @@ import coolsquid.react.util.Util;
 public class Actions {
 
 	public static void register() {
-		registerAction("send_chat", (Action<EntityPlayer>) (event, target, parameters) -> target
+		registerAction("send_chat", (Action<EntityPlayer>) (event, target, parameters, variables) -> target
 				.sendMessage(new TextComponentString((String) parameters.get("message"))), "message");
 		registerAction("feed",
-				(Action<EntityPlayer>) (event, target, parameters) -> target.getFoodStats().setFoodLevel(
+				(Action<EntityPlayer>) (event, target, parameters, variables) -> target.getFoodStats().setFoodLevel(
 						target.getFoodStats().getFoodLevel() + ((Number) parameters.get("amount")).intValue()),
 				"amount");
 
-		registerAction("kill", (Action<EntityLivingBase>) (event, target, parameters) -> target
+		registerAction("kill", (Action<EntityLivingBase>) (event, target, parameters, variables) -> target
 				.attackEntityFrom(Util.getDamageSource(parameters.get("damage_source")), Float.MAX_VALUE));
 		registerAction("damage",
-				(Action<EntityLivingBase>) (event, target, parameters) -> target.attackEntityFrom(
+				(Action<EntityLivingBase>) (event, target, parameters, variables) -> target.attackEntityFrom(
 						Util.getDamageSource(parameters.get("damage_source")),
 						((Number) parameters.get("amount")).floatValue()),
 				"amount");
-		registerAction("heal", (Action<EntityLivingBase>) (event, target, parameters) -> target
+		registerAction("heal", (Action<EntityLivingBase>) (event, target, parameters, variables) -> target
 				.heal(((Number) parameters.get("amount")).floatValue()), "amount");
-		registerAction("set_time", (Action<World>) (event, target, parameters) -> {
+		registerAction("set_time", (Action<World>) (event, target, parameters, variables) -> {
 			Object time = parameters.get("time");
 			if (time instanceof String) {
 				if (time.equals("day")) {
@@ -59,7 +63,7 @@ public class Actions {
 			}
 			target.setWorldTime(((Number) time).longValue());
 		}, "time");
-		registerAction("change_weather", (Action<World>) (event, target, parameters) -> {
+		registerAction("change_weather", (Action<World>) (event, target, parameters, variables) -> {
 			int i = (300 + new Random().nextInt(600)) * 20;
 			WorldInfo worldinfo = target.getWorldInfo();
 			Boolean rain = (Boolean) parameters.get("rain");
@@ -83,10 +87,11 @@ public class Actions {
 				worldinfo.setThundering(false);
 			}
 		});
-		registerAction("burn", (Action<EntityLivingBase>) (event, target, parameters) -> target
+		registerAction("burn", (Action<EntityLivingBase>) (event, target, parameters, variables) -> target
 				.setFire(((Number) parameters.get("duration")).intValue()), "duration");
-		registerAction("extinguish", (Action<EntityLivingBase>) (event, target, parameters) -> target.extinguish());
-		registerAction("add_potion_effect", (Action<EntityLivingBase>) (event, target, parameters) -> {
+		registerAction("extinguish",
+				(Action<EntityLivingBase>) (event, target, parameters, variables) -> target.extinguish());
+		registerAction("add_potion_effect", (Action<EntityLivingBase>) (event, target, parameters, variables) -> {
 			Potion potion = Potion.REGISTRY.getObject(new ResourceLocation((String) parameters.get("potion")));
 			if (potion == null) {
 				throw new IllegalArgumentException("No such potion " + parameters.get("potion"));
@@ -97,12 +102,12 @@ public class Actions {
 					amplifier == null ? 0 : amplifier.intValue()));
 		}, "potion");
 		registerAction("remove_potion_effect",
-				(Action<EntityLivingBase>) (event, target, parameters) -> target.removeActivePotionEffect(
+				(Action<EntityLivingBase>) (event, target, parameters, variables) -> target.removeActivePotionEffect(
 						Potion.REGISTRY.getObject(new ResourceLocation((String) parameters.get("potion")))),
 				"potion");
-		registerAction("set_invulnerable", (Action<Entity>) (event, target, parameters) -> target
+		registerAction("set_invulnerable", (Action<Entity>) (event, target, parameters, variables) -> target
 				.setEntityInvulnerable((boolean) parameters.get("invulnerable")), "invulnerable");
-		registerAction("set_position", (Action<Entity>) (event, target, parameters) -> {
+		registerAction("set_position", (Action<Entity>) (event, target, parameters, variables) -> {
 			double x = Util.getRelativeNumber(parameters.get("x"), target.posX);
 			double y = Util.getRelativeNumber(parameters.get("y"), target.posY);
 			double z = Util.getRelativeNumber(parameters.get("z"), target.posZ);
@@ -118,7 +123,7 @@ public class Actions {
 			}
 		}, "x", "y", "z");
 
-		registerAction("cancel", (event, target, parameters) -> {
+		registerAction("cancel", (event, target, parameters, variables) -> {
 			boolean success = false;
 			if (event.isCancelable()) {
 				event.setCanceled(true);
@@ -138,7 +143,7 @@ public class Actions {
 				Log.REACT.error("Tried to cancel uncancelable event %s", event.getClass().getName());
 			}
 		});
-		registerAction("log", (event, target, parameters) -> {
+		registerAction("log", (event, target, parameters, variables) -> {
 			String logName = (String) parameters.get("log_name");
 			Integer numToRetain = (Integer) parameters.get("maximum_backups");
 			if (numToRetain == null) {
@@ -155,14 +160,33 @@ public class Actions {
 			}
 		}, "message");
 		registerAction("command",
-				(event, target, parameters) -> FMLCommonHandler.instance().getMinecraftServerInstance()
+				(event, target, parameters, variables) -> FMLCommonHandler.instance().getMinecraftServerInstance()
 						.getCommandManager()
 						.executeCommand((ICommandSender) target, (String) parameters.get("command")),
 				"command");
 		registerAction("server_command",
-				(event, target, parameters) -> FMLCommonHandler.instance().getMinecraftServerInstance()
+				(event, target, parameters, variables) -> FMLCommonHandler.instance().getMinecraftServerInstance()
 						.getCommandManager().executeCommand(FMLCommonHandler.instance().getMinecraftServerInstance(),
 								(String) parameters.get("command")),
 				"command");
+		registerAction("explode", (event, target, parameters, variables) -> {
+			final World world = (World) variables.get("world");
+			final boolean isFlaming = (boolean) parameters.get("flames");
+			final boolean isSmoking = true; // (boolean) parameters.get("smoke"); // If false, nothing seems to explode
+			final float strength = ((Number) parameters.get("strength")).floatValue();
+			Entity entity = target instanceof Entity ? (Entity) target : null;
+			Vec3d pos = Util.getCoordFromTarget(target, parameters);
+			world.newExplosion(entity, pos.x, pos.y, pos.z, strength, isFlaming, isSmoking);
+		}, "flames", "smoke", "strength");
+		registerAction("set_block", (event, target, parameters, variables) -> {
+			final World world = (World) variables.get("world");
+			final IBlockState newState = Block.getBlockFromName((String) parameters.get("block"))
+					.getStateFromMeta(parameters.containsKey("meta") ? (int) parameters.get("meta") : 0);
+			world.setBlockState(new BlockPos(Util.getCoordFromTarget(target, parameters)), newState);
+		}, "block");
+		registerAction("destroy_block", (event, target, parameters, variables) -> {
+			((World) variables.get("world")).destroyBlock(new BlockPos(Util.getCoordFromTarget(target, parameters)),
+					(boolean) parameters.get("drop"));
+		}, "drop");
 	}
 }

@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.stats.StatList;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -38,6 +39,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.CropGrowEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
@@ -114,8 +116,9 @@ public class Events {
 			return null;
 		});
 		registerVariable(EntityJoinWorldEvent.class, "world", (event) -> event.getEntity().world);
-		registerEvent("player_spawn", EntityJoinWorldEvent.class,
-				(event) -> event.getEntity() instanceof EntityPlayer && event.getEntity().ticksExisted == 0);
+		registerEvent("player_spawn", PlayerLoggedInEvent.class,
+				(event) -> FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+						.getPlayerStatsFile(event.player).readStat(StatList.LEAVE_GAME) == 0);
 
 		registerEvent("player_wake_up", PlayerWakeUpEvent.class);
 		registerEvent("player_sleep", PlayerSleepInBedEvent.class);

@@ -18,7 +18,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import coolsquid.react.api.event.Action;
 import coolsquid.react.api.event.Variable;
 import coolsquid.react.event.InternalEventManager;
-import coolsquid.react.integration.Integration;
 import coolsquid.react.util.Log;
 import coolsquid.react.util.WarningHandler;
 
@@ -60,14 +59,6 @@ public class ConfigManager {
 		ConfigWrapper config = new ConfigWrapper(MOD_CONFIG_FILE);
 		syncConfigs = config.getBoolean("sync", true);
 		debug = config.getBoolean("debug", false);
-		ConfigWrapper cat1 = config.getConfig("integrations");
-		for (Integration i : Integration.INTEGRATIONS) {
-			if (cat1.getBoolean(i.getModID(), false) && Loader.isModLoaded(i.getModID())) {
-				i.enable();
-			} else {
-				i.disable();
-			}
-		}
 		config.save();
 		loadFile(configDir);
 		if (errorCount > 0 && FMLCommonHandler.instance().getSide() == Side.CLIENT) {

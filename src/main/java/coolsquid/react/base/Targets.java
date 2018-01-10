@@ -193,9 +193,9 @@ public class Targets {
 		registerTargetProperty("type", EntityLivingBase.class,
 				(variable) -> variable instanceof EntityPlayer ? "minecraft:player"
 						: Objects.toString(EntityList.getKey(variable)));
-		registerTargetProperty("x_position", EntityLivingBase.class, (variable) -> String.valueOf(variable.posX));
-		registerTargetProperty("y_position", EntityLivingBase.class, (variable) -> String.valueOf(variable.posY));
-		registerTargetProperty("z_position", EntityLivingBase.class, (variable) -> String.valueOf(variable.posZ));
+		registerTargetProperty("x_position", EntityLivingBase.class, (variable) -> String.valueOf((int) variable.posX));
+		registerTargetProperty("y_position", EntityLivingBase.class, (variable) -> String.valueOf((int) variable.posY));
+		registerTargetProperty("z_position", EntityLivingBase.class, (variable) -> String.valueOf((int) variable.posZ));
 		registerTargetProperty("health", EntityLivingBase.class,
 				(TargetProperty<EntityLivingBase>) (variable) -> String.valueOf(variable.getHealth()));
 		registerTargetProperty("helmet", EntityLivingBase.class, (TargetProperty<EntityLivingBase>) (variable) -> Util
@@ -239,9 +239,12 @@ public class Targets {
 		registerTargetProperty("list", String[].class,
 				(TargetProperty<String[]>) (variable) -> String.join(", ", variable));
 
-		registerTargetProperty("x_position", Explosion.class, (variable) -> String.valueOf(variable.getPosition().x));
-		registerTargetProperty("y_position", Explosion.class, (variable) -> String.valueOf(variable.getPosition().y));
-		registerTargetProperty("z_position", Explosion.class, (variable) -> String.valueOf(variable.getPosition().z));
+		registerTargetProperty("x_position", Explosion.class,
+				(variable) -> String.valueOf((int) variable.getPosition().x));
+		registerTargetProperty("y_position", Explosion.class,
+				(variable) -> String.valueOf((int) variable.getPosition().y));
+		registerTargetProperty("z_position", Explosion.class,
+				(variable) -> String.valueOf((int) variable.getPosition().z));
 	}
 
 	public static void register() {

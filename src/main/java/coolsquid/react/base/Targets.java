@@ -245,6 +245,11 @@ public class Targets {
 				(variable) -> String.valueOf((int) variable.getPosition().y));
 		registerTargetProperty("z_position", Explosion.class,
 				(variable) -> String.valueOf((int) variable.getPosition().z));
+
+		registerTargetProperty("id", World.class, (variable) -> String.valueOf(variable.provider.getDimension()));
+		registerTargetProperty("seed", World.class, (variable) -> String.valueOf(variable.getSeed()));
+		registerTargetProperty("time", World.class, (variable) -> String.valueOf(variable.getWorldTime()));
+
 	}
 
 	public static void register() {

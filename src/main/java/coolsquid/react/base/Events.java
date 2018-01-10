@@ -26,6 +26,7 @@ import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -85,6 +86,8 @@ public class Events {
 		registerVariable(EntityMountEvent.class, "mounted_mob", (event) -> event.getEntityBeingMounted());
 
 		registerEvent("mob_spawn", LivingSpawnEvent.SpecialSpawn.class);
+
+		registerEvent("mob_update", LivingUpdateEvent.class);
 
 		registerVariable(net.minecraftforge.fml.common.gameevent.PlayerEvent.class, "mob", (event) -> event.player);
 		registerVariable(net.minecraftforge.fml.common.gameevent.PlayerEvent.class, "player", (event) -> event.player);

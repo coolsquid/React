@@ -74,85 +74,116 @@ public class Log {
 	}
 
 	public void catching(Throwable t) {
+		synchronized (this) {
+			while (this.inUse) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+
+				}
+			}
+			this.inUse = true;
+			if (this.log != null) {
+				t.printStackTrace(new PrintWriter(this.log));
+				try {
+					this.log.newLine();
+					this.log.flush();
+				} catch (IOException e) {
+					this.log4j.catching(e);
+				}
+			}
+			this.inUse = false;
+			this.notify();
+		}
 		if (this.log4j != null) {
 			this.log4j.catching(t);
 		}
-		if (this.log != null) {
-			t.printStackTrace(new PrintWriter(this.log));
-			try {
-				this.log.newLine();
-				this.log.flush();
-			} catch (IOException e) {
-				this.log4j.catching(e);
-			}
-		}
 	}
 
-	public synchronized void log(boolean log4j, Level level, String message, Object... args) {
-		if (this.inUse) {
-			System.out.println("ouch");
-		}
-		this.inUse = true;
-		this.updateFile();
-		this.lastCompactDate = null;
-		this.lastCompactTime = null;
+	public void log(boolean log4j, Level level, String message, Object... args) {
 		String formattedMessage = args.length > 0 ? String.format(message, args) : message;
 		if (log4j && this.log4j != null) {
 			this.log4j.log(level, formattedMessage);
 		}
-		if (this.log != null) {
-			try {
-				this.log.write("[");
-				this.log.write(DATE_FORMAT.format(new Date()));
-				this.log.write("] [");
-				this.log.write(level.name());
-				this.log.write("]: ");
-				this.log.write(formattedMessage);
-				this.log.newLine();
-				this.log.flush();
-			} catch (IOException e) {
-				this.log4j.catching(e);
+		synchronized (this) {
+			while (this.inUse) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+
+				}
 			}
+			this.inUse = true;
+			this.updateFile();
+			this.lastCompactDate = null;
+			this.lastCompactTime = null;
+			if (this.log != null) {
+				try {
+					this.log.write("[");
+					this.log.write(DATE_FORMAT.format(new Date()));
+					this.log.write("] [");
+					this.log.write(level.name());
+					this.log.write("]: ");
+					this.log.write(formattedMessage);
+					this.log.newLine();
+					this.log.flush();
+				} catch (IOException e) {
+					this.log4j.catching(e);
+				}
+			}
+			this.inUse = false;
+			this.notify();
 		}
-		this.inUse = false;
 	}
 
-	public synchronized void logCompactly(String message, Object... args) {
-		this.updateFile();
+	public void logCompactly(String message, Object... args) {
 		String formattedMessage = args.length > 0 ? String.format(message, args) : message;
 		Date d = new Date();
 		String date = COMPACT_DATE_FORMAT.format(d);
 		String time = COMPACT_TIME_FORMAT.format(d);
-		if (this.log != null) {
-			try {
-				if (this.lastCompactDate == null || !date.equals(this.lastCompactDate)) {
-					this.log.write(date);
-					this.log.write(":");
-					this.log.newLine();
-					this.lastCompactDate = date;
+		synchronized (this) {
+			while (this.inUse) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+
 				}
-				if (this.lastCompactTime == null || !time.equals(this.lastCompactTime)) {
-					this.log.write(time);
-					this.log.write(":");
-					this.log.newLine();
-					this.lastCompactTime = time;
-				}
-				this.log.write(formattedMessage);
-				this.log.newLine();
-				this.log.flush();
-			} catch (IOException e) {
-				this.log4j.catching(e);
 			}
+			this.inUse = true;
+			this.updateFile();
+			if (this.log != null) {
+				try {
+					if (this.lastCompactDate == null || !date.equals(this.lastCompactDate)) {
+						this.log.write(date);
+						this.log.write(":");
+						this.log.newLine();
+						this.lastCompactDate = date;
+					}
+					if (this.lastCompactTime == null || !time.equals(this.lastCompactTime)) {
+						this.log.write(time);
+						this.log.write(":");
+						this.log.newLine();
+						this.lastCompactTime = time;
+					}
+					this.log.write(formattedMessage);
+					this.log.newLine();
+					this.log.flush();
+				} catch (IOException e) {
+					this.log4j.catching(e);
+				}
+			}
+			this.inUse = false;
+			this.notify();
 		}
 	}
 
-	private void updateFile() {
+	private synchronized void updateFile() {
 		if (this.file.length() >= LOG_SIZE) {
 			this.initIO();
 		}
 	}
 
-	private void initIO() {
+	private synchronized void initIO() {
 		if (this.log != null) {
 			try {
 				this.log.close();
@@ -181,7 +212,7 @@ public class Log {
 		this.log = log;
 	}
 
-	private void moveLog(File file, int num) {
+	private synchronized void moveLog(File file, int num) {
 		if (file.exists()) {
 			if (num > this.numToRetain) {
 				file.delete();

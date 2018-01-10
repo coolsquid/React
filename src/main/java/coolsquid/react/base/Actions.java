@@ -159,7 +159,6 @@ public class Actions {
 			} else {
 				Log log = Log.getLog(logName);
 				if (log == null) {
-					System.out.println("wefughiigufew");
 					log = new Log(logName, "logs/react/" + logName, false, numToRetain);
 				}
 				if (compact) {

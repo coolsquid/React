@@ -4,6 +4,7 @@ package coolsquid.react.util;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -11,7 +12,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,49 +24,32 @@ public class Log {
 	private static final Map<String, Log> LOGS = new HashMap<>();
 	public static final Log REACT = new Log("React", "logs/react", true, 0);
 
+	private static final long LOG_SIZE = 1024L * 1024L * 20L;
+
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy-HH:mm:ss");
-	private final String file;
+	private static final SimpleDateFormat COMPACT_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+	private static final SimpleDateFormat COMPACT_TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+	private String filePath;
+	private File file;
 	private final int numToRetain;
 	private final Logger log4j;
-	private final BufferedWriter log;
+	private BufferedWriter log;
+
+	private String lastCompactDate;
+	private String lastCompactTime;
+
+	private boolean inUse;
 
 	public Log(String name, String filePath, boolean mainLog, int numToRetain) {
-		this.file = filePath;
+		this.filePath = filePath;
 		this.numToRetain = numToRetain;
 		if (mainLog) {
 			this.log4j = LogManager.getLogger(name);
 		} else {
 			this.log4j = null;
 		}
-		BufferedWriter log = null;
-		try {
-			File file = new File(filePath + ".log");
-			this.moveLog(file, 1);
-			log = new BufferedWriter(new OutputStreamWriter(FileUtils.openOutputStream(file)));
-		} catch (IOException e) {
-			if (this.log4j == null) {
-				LogManager.getLogger("React").catching(e);
-			} else {
-				this.log4j.catching(e);
-			}
-			log = null;
-		}
-		this.log = log;
+		this.initIO();
 		LOGS.put(name, this);
-	}
-
-	private void moveLog(File file, int num) {
-		if (file.exists()) {
-			if (num > this.numToRetain) {
-				file.delete();
-			} else {
-				File newFile = new File(this.file + "-" + num + ".log");
-				if (newFile.exists()) {
-					this.moveLog(newFile, num + 1);
-				}
-				file.renameTo(newFile);
-			}
-		}
 	}
 
 	public void error(String message, Object... args) {
@@ -97,7 +83,14 @@ public class Log {
 		}
 	}
 
-	public void log(boolean log4j, Level level, String message, Object... args) {
+	public synchronized void log(boolean log4j, Level level, String message, Object... args) {
+		if (this.inUse) {
+			System.out.println("ouch");
+		}
+		this.inUse = true;
+		this.updateFile();
+		this.lastCompactDate = null;
+		this.lastCompactTime = null;
 		String formattedMessage = args.length > 0 ? String.format(message, args) : message;
 		if (log4j && this.log4j != null) {
 			this.log4j.log(level, formattedMessage);
@@ -114,6 +107,97 @@ public class Log {
 				this.log.flush();
 			} catch (IOException e) {
 				this.log4j.catching(e);
+			}
+		}
+		this.inUse = false;
+	}
+
+	public synchronized void logCompactly(String message, Object... args) {
+		this.updateFile();
+		String formattedMessage = args.length > 0 ? String.format(message, args) : message;
+		Date d = new Date();
+		String date = COMPACT_DATE_FORMAT.format(d);
+		String time = COMPACT_TIME_FORMAT.format(d);
+		if (this.log != null) {
+			try {
+				if (this.lastCompactDate == null || !date.equals(this.lastCompactDate)) {
+					this.log.write(date);
+					this.log.write(":");
+					this.log.newLine();
+					this.lastCompactDate = date;
+				}
+				if (this.lastCompactTime == null || !time.equals(this.lastCompactTime)) {
+					this.log.write(time);
+					this.log.write(":");
+					this.log.newLine();
+					this.lastCompactTime = time;
+				}
+				this.log.write(formattedMessage);
+				this.log.newLine();
+				this.log.flush();
+			} catch (IOException e) {
+				this.log4j.catching(e);
+			}
+		}
+	}
+
+	private void updateFile() {
+		if (this.file.length() >= LOG_SIZE) {
+			this.initIO();
+		}
+	}
+
+	private void initIO() {
+		if (this.log != null) {
+			try {
+				this.log.close();
+			} catch (IOException e) {
+				if (this.log4j == null) {
+					LogManager.getLogger("React").catching(e);
+				} else {
+					this.log4j.catching(e);
+				}
+			}
+		}
+		BufferedWriter log = null;
+		File file = new File(this.filePath + ".log");
+		this.file = file;
+		try {
+			this.moveLog(file, 1);
+			log = new BufferedWriter(new OutputStreamWriter(FileUtils.openOutputStream(file)));
+		} catch (IOException e) {
+			if (this.log4j == null) {
+				LogManager.getLogger("React").catching(e);
+			} else {
+				this.log4j.catching(e);
+			}
+			log = null;
+		}
+		this.log = log;
+	}
+
+	private void moveLog(File file, int num) {
+		if (file.exists()) {
+			if (num > this.numToRetain) {
+				file.delete();
+			} else {
+				File newFile = new File(this.filePath + "-" + num + ".zip");
+				if (newFile.exists()) {
+					this.moveLog(newFile, num + 1);
+				}
+				if (file.getName().endsWith(".zip")) {
+					file.renameTo(newFile);
+				} else {
+					try (InputStream in = FileUtils.openInputStream(file);
+							ZipArchiveOutputStream out = new ZipArchiveOutputStream(newFile)) {
+						out.putArchiveEntry(out.createArchiveEntry(file, file.getName()));
+						IOUtils.copy(in, out);
+						out.closeArchiveEntry();
+					} catch (IOException e) {
+						Log.REACT.catching(e);
+						file.renameTo(newFile);
+					}
+				}
 			}
 		}
 	}

@@ -146,17 +146,27 @@ public class Actions {
 		registerAction("log", (event, target, parameters, variables) -> {
 			String logName = (String) parameters.get("log_name");
 			Integer numToRetain = (Integer) parameters.get("maximum_backups");
+			boolean compact = parameters.containsKey("compact") ? (boolean) parameters.get("compact") : false;
 			if (numToRetain == null) {
 				numToRetain = 5;
 			}
 			if (logName == null) {
-				Log.REACT.info((String) parameters.get("message"));
+				if (compact) {
+					Log.REACT.logCompactly((String) parameters.get("message"));
+				} else {
+					Log.REACT.info((String) parameters.get("message"));
+				}
 			} else {
 				Log log = Log.getLog(logName);
 				if (log == null) {
+					System.out.println("wefughiigufew");
 					log = new Log(logName, "logs/react/" + logName, false, numToRetain);
 				}
-				log.info((String) parameters.get("message"));
+				if (compact) {
+					log.logCompactly((String) parameters.get("message"));
+				} else {
+					log.info((String) parameters.get("message"));
+				}
 			}
 		}, "message");
 		registerAction("command",

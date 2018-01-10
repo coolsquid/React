@@ -35,6 +35,11 @@ import com.google.common.collect.Lists;
 
 public class CommandReact extends CommandBase {
 
+	private static final String USAGE = "Available subcommands:\r\n"
+			+ "- reload: Reloads all scripts from the React configuration directory. Syntax example: /react reload\r\n"
+			+ "- debug: Displays whether debug mode is enabled or not. Can be used with a boolean parameter to temporarily enable or disable debug mode. Syntax example: /react debug true\r\n"
+			+ "- dump: Dumps a list of items, blocks, actions, conditions, targets, target filters, events, or damage sources to logs/react-dump.txt. Syntax example: /react dump items";
+
 	@Override
 	public String getName() {
 		return "react";
@@ -42,17 +47,17 @@ public class CommandReact extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "";
+		return USAGE;
 	}
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (args.length < 1) {
-			sender.sendMessage(new TextComponentString("<React> Too few parameters"));
+			sender.sendMessage(new TextComponentString("<React> Too few parameters."));
 		} else if (args[0].equals("reload")) {
 			ConfigManager.load();
 			PacketManager.sendConfigsToClient(null);
-			sender.sendMessage(new TextComponentString("<React> Reloaded scripts"));
+			sender.sendMessage(new TextComponentString("<React> Reloaded scripts."));
 		} else if (args[0].equals("dump")) {
 			if (args.length == 1) {
 				sender.sendMessage(new TextComponentString("<React> You need to specify something to dump."));
@@ -110,7 +115,7 @@ public class CommandReact extends CommandBase {
 							w.write(item);
 							w.newLine();
 						}
-					} else if (args[i].equals("target_conditions")) {
+					} else if (args[i].equals("target_filters")) {
 						w.newLine();
 						w.write("Script target conditions:");
 						w.newLine();
@@ -159,8 +164,19 @@ public class CommandReact extends CommandBase {
 				message.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, "logs/react.log"));
 				sender.sendMessage(message);
 			}
+		} else if (args[0].equals("debug")) {
+			if (args.length > 1) {
+				ConfigManager.debug = Boolean.parseBoolean(args[1]);
+				if (ConfigManager.debug) {
+					sender.sendMessage(new TextComponentString("<React> Temporarily enabled debug mode."));
+				} else {
+					sender.sendMessage(new TextComponentString("<React> Temporarily disabled debug mode."));
+				}
+			} else {
+				sender.sendMessage(new TextComponentString("<React> Debug mode: " + ConfigManager.debug));
+			}
 		} else {
-			sender.sendMessage(new TextComponentString("<React> No such subcommand"));
+			sender.sendMessage(new TextComponentString("<React> No such subcommand."));
 		}
 	}
 
@@ -169,11 +185,13 @@ public class CommandReact extends CommandBase {
 			BlockPos targetPos) {
 		switch (args.length) {
 			case 1:
-				return filter(args[0], "reload", "dump");
+				return filter(args[0], "reload", "dump", "debug");
 			default:
 				if (args[0].equals("dump")) {
 					return filter(args[args.length - 1], "items", "blocks", "actions", "conditions", "targets",
 							"target_conditions", "events");
+				} else if (args[0].equals("debug")) {
+					return filter(args[1], "true", "false");
 				} else {
 					return Collections.emptyList();
 				}

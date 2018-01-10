@@ -43,29 +43,42 @@ public class ConfigManager {
 	private static int errorCount = 0;
 
 	public static void load() {
-		load(CONFIG_DIRECTORY, true);
+		load(CONFIG_DIRECTORY, true, true);
 	}
 
-	public static void load(File configDir, boolean reset) {
+	public static int load(File configDir, boolean reset, boolean handleWarnings) {
 		if (reset) {
 			InternalEventManager.LISTENERS.clear();
 		}
 		if (!configDir.exists()) {
 			configDir.mkdirs();
 		}
-		if (!configDir.isDirectory() || !configDir.canRead()) {
-			throw new IllegalArgumentException("The config directory has to be a readable directory");
+		if (!configDir.isDirectory()) {
+			Log.REACT.error("The React config directory is not a directory!");
+			errorCount++;
+			return errorCount;
+		} else if (!configDir.canRead()) {
+			Log.REACT.error("The React config directory is not readable!");
+			errorCount++;
+			return errorCount;
 		}
-		ConfigWrapper config = new ConfigWrapper(MOD_CONFIG_FILE);
-		syncConfigs = config.getBoolean("sync", true);
-		debug = config.getBoolean("debug", false);
-		config.save();
-		loadFile(configDir);
-		if (errorCount > 0 && FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+		try {
+			ConfigWrapper config = new ConfigWrapper(MOD_CONFIG_FILE);
+			syncConfigs = config.getBoolean("sync", true);
+			debug = config.getBoolean("debug", false);
+			config.save();
+			loadFile(configDir);
+		} catch (Exception e) {
+			Log.REACT.error("Error while loading configs");
+			Log.REACT.catching(e);
+			errorCount++;
+			return errorCount;
+		}
+		if (handleWarnings && errorCount > 0 && FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 			WarningHandler.registerWarning(errorCount);
 		}
-		errorCount = 0;
 		InternalEventManager.setupEvents();
+		return errorCount + (errorCount = 0);
 	}
 
 	public static void loadFile(File file) {
@@ -136,10 +149,10 @@ public class ConfigManager {
 							InternalEventManager.registerListener(eventType.getValue(), type, target, parameters,
 									conditions, targetConditions);
 						}
-					} catch (Throwable t) {
+					} catch (Exception e) {
 						Log.REACT.error("Exception while loading script %s section %s.%s:", root.origin().filename(),
 								eventType.getKey(), i + 1);
-						Log.REACT.catching(t);
+						Log.REACT.catching(e);
 						errorCount++;
 					}
 				}

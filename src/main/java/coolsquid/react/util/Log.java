@@ -68,6 +68,11 @@ public class Log {
 		this.log(true, Level.DEBUG, message, args);
 	}
 
+	public void catching(Throwable t, String message, Object... args) {
+		this.error(message, args);
+		this.catching(t);
+	}
+
 	public void catching(Throwable t) {
 		if (this.log4j != null) {
 			this.log4j.catching(t);

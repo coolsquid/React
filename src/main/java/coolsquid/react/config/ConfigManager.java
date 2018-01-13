@@ -43,10 +43,10 @@ public class ConfigManager {
 	private static int errorCount = 0;
 
 	public static void load() {
-		load(CONFIG_DIRECTORY, true, true);
+		load(CONFIG_DIRECTORY, true);
 	}
 
-	public static int load(File configDir, boolean reset, boolean handleWarnings) {
+	public static int load(File configDir, boolean reset) {
 		if (reset) {
 			InternalEventManager.LISTENERS.clear();
 		}
@@ -74,7 +74,7 @@ public class ConfigManager {
 			errorCount++;
 			return errorCount;
 		}
-		if (handleWarnings && errorCount > 0 && FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+		if (errorCount > 0 && FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 			WarningHandler.registerWarning(errorCount);
 		}
 		InternalEventManager.setupEvents();

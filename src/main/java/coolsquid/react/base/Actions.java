@@ -10,10 +10,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -197,5 +201,18 @@ public class Actions {
 			((World) variables.get("world")).destroyBlock(new BlockPos(Util.getCoordFromTarget(target, parameters)),
 					(boolean) parameters.get("drop"));
 		}, "drop");
+		registerAction("spawn_mob", (event, target, parameters, variables) -> {
+			World world = ((World) variables.get("world"));
+			Entity entity = EntityList.createEntityByIDFromName(new ResourceLocation((String) parameters.get("mob_type")), world);
+			Vec3d loc = Util.getCoordFromTarget(target, parameters);
+			entity.setPosition(loc.x, loc.y, loc.z);
+			world.spawnEntity(entity);
+		}, "mob_type");
+		registerAction("spawn_item", (event, target, parameters, variables) -> {
+			World world = ((World) variables.get("world"));
+			Vec3d loc = Util.getCoordFromTarget(target, parameters);
+			EntityItem entity = new EntityItem(world, loc.x, loc.y, loc.z, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation((String) parameters.get("item")))));
+			world.spawnEntity(entity);
+		}, "item");
 	}
 }

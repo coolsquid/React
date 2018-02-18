@@ -19,6 +19,7 @@ import coolsquid.react.api.event.Action;
 import coolsquid.react.api.event.Variable;
 import coolsquid.react.event.InternalEventManager;
 import coolsquid.react.util.Log;
+import coolsquid.react.util.Util;
 import coolsquid.react.util.WarningHandler;
 
 import com.typesafe.config.Config;
@@ -208,8 +209,13 @@ public class ConfigManager {
 		}
 		Config parameters = action.getConfig("parameters");
 		Map<String, Object> compiledParameters = new HashMap<>();
-		for (Entry<String, ConfigValue> parameter : parameters.entrySet()) {
-			compiledParameters.put(noQuotes(parameter.getKey()), parameter.getValue().unwrapped());
+		for (Entry<String, ConfigValue> parameter : parameters.root().entrySet()) {
+			String key = noQuotes(parameter.getKey());
+			if (parameter.getValue().valueType() == ConfigValueType.OBJECT) {
+				compiledParameters.put(key, parameters.getConfig(key));
+			} else {
+				compiledParameters.put(key, parameter.getValue().unwrapped());
+			}
 		}
 		return compiledParameters;
 	}

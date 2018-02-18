@@ -6,6 +6,11 @@ import static coolsquid.react.api.event.EventManager.registerAction;
 import java.util.EnumSet;
 import java.util.Random;
 
+import com.typesafe.config.Config;
+
+import coolsquid.react.api.event.Action;
+import coolsquid.react.util.Log;
+import coolsquid.react.util.Util;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
@@ -32,10 +37,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-
-import coolsquid.react.api.event.Action;
-import coolsquid.react.util.Log;
-import coolsquid.react.util.Util;
 
 public class Actions {
 
@@ -211,7 +212,11 @@ public class Actions {
 		registerAction("spawn_item", (event, target, parameters, variables) -> {
 			World world = ((World) variables.get("world"));
 			Vec3d loc = Util.getCoordFromTarget(target, parameters);
-			EntityItem entity = new EntityItem(world, loc.x, loc.y, loc.z, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation((String) parameters.get("item")))));
+			ItemStack stack = new ItemStack(Item.REGISTRY.getObject(new ResourceLocation((String) parameters.get("item"))), 1, parameters.containsKey("meta") ? ((Integer) parameters.get("meta")).intValue() : 0);
+			if (parameters.containsKey("nbt")) {
+				stack.setTagCompound(Util.createNBT((Config) parameters.get("nbt")));
+			}
+			EntityItem entity = new EntityItem(world, loc.x, loc.y, loc.z, stack);
 			world.spawnEntity(entity);
 		}, "item");
 	}

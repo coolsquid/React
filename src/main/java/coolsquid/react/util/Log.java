@@ -1,4 +1,3 @@
-
 package coolsquid.react.util;
 
 import java.io.BufferedWriter;
@@ -11,8 +10,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
@@ -225,10 +225,10 @@ public class Log {
 					file.renameTo(newFile);
 				} else {
 					try (InputStream in = FileUtils.openInputStream(file);
-							ZipArchiveOutputStream out = new ZipArchiveOutputStream(newFile)) {
-						out.putArchiveEntry(out.createArchiveEntry(file, file.getName()));
+							ZipOutputStream out = new ZipOutputStream(FileUtils.openOutputStream(newFile))) {
+						out.putNextEntry(new ZipEntry(file.getName()));
 						IOUtils.copy(in, out);
-						out.closeArchiveEntry();
+						out.closeEntry();
 					} catch (IOException e) {
 						Log.REACT.catching(e);
 						file.renameTo(newFile);

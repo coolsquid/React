@@ -191,7 +191,7 @@ public class Actions {
 			Entity entity = target instanceof Entity ? (Entity) target : null;
 			Vec3d pos = Util.getCoordFromTarget(target, parameters);
 			world.newExplosion(entity, pos.x, pos.y, pos.z, strength, isFlaming, isSmoking);
-		}, "flames", "smoke", "strength");
+		}, "flames", "strength");
 		registerAction("set_block", (event, target, parameters, variables) -> {
 			final World world = (World) variables.get("world");
 			final IBlockState newState = Block.getBlockFromName((String) parameters.get("block"))

@@ -126,7 +126,23 @@ public class Targets {
 				EntityLivingBase.class);
 
 		registerTargetCondition("time",
-				(target, expected) -> target.isDaytime() ? expected.equals("day") : expected.equals("night"),
+				(target, expected) -> {
+					if (expected instanceof String) {
+						return target.isDaytime() ? expected.equals("day") : expected.equals("night");
+					} else {
+						return target.getWorldTime() == ((Number) expected).longValue();
+					}
+				},
+				World.class);
+		registerTargetCondition("min_time",
+				(target, expected) -> {
+					return target.getWorldTime() >= ((Number) expected).longValue();
+				},
+				World.class);
+		registerTargetCondition("max_time",
+				(target, expected) -> {
+					return target.getWorldTime() <= ((Number) expected).longValue();
+				},
 				World.class);
 		registerTargetCondition("difficulty",
 				(target, expected) -> expected.equals(target.getWorldInfo().getDifficulty().toString().toLowerCase()),

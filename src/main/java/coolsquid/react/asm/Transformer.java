@@ -30,8 +30,10 @@ public class Transformer implements IClassTransformer, IFMLLoadingPlugin {
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
 		if (transformEntity && transformedName.equals("net.minecraft.entity.Entity")) {
+			String entityClass = (name.equals(transformedName) ? "net/minecraft/entity/Entity" : "vg");
+			String moverTypeClass = (name.equals(transformedName) ? "net/minecraft/entity/MoverType" : "vv");
 			ClassNode c = createClassNode(basicClass);
-			MethodNode m = this.getMethod(c, "move", "(Lnet/minecraft/entity/MoverType;DDD)V", "a", "(Lamu;)I");
+			MethodNode m = this.getMethod(c, "move", "(Lnet/minecraft/entity/MoverType;DDD)V", "a", "(L" + moverTypeClass + ";DDD)V");
 			InsnList toInject = new InsnList();
 			toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 			toInject.add(new VarInsnNode(Opcodes.ALOAD, 1));
@@ -39,7 +41,7 @@ public class Transformer implements IClassTransformer, IFMLLoadingPlugin {
 			toInject.add(new VarInsnNode(Opcodes.DLOAD, 4));
 			toInject.add(new VarInsnNode(Opcodes.DLOAD, 6));
 			toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(Hooks.class), "fireMoveEvent",
-					"(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/MoverType;DDD)Z", false));
+					"(L" + entityClass + ";L" + moverTypeClass + ";DDD)Z", false));
 			LabelNode l1 = new LabelNode();
 			toInject.add(new JumpInsnNode(Opcodes.IFEQ, l1));
 			LabelNode l2 = new LabelNode();

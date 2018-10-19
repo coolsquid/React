@@ -30,8 +30,8 @@ public class Transformer implements IClassTransformer, IFMLLoadingPlugin {
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
 		if (transformEntity && transformedName.equals("net.minecraft.entity.Entity")) {
-			String entityClass = (name.equals(transformedName) ? "net/minecraft/entity/Entity" : "vg");
-			String moverTypeClass = (name.equals(transformedName) ? "net/minecraft/entity/MoverType" : "vv");
+			String entityClass = name.equals(transformedName) ? "net/minecraft/entity/Entity" : "vg";
+			String moverTypeClass = name.equals(transformedName) ? "net/minecraft/entity/MoverType" : "vv";
 			ClassNode c = createClassNode(basicClass);
 			MethodNode m = this.getMethod(c, "move", "(Lnet/minecraft/entity/MoverType;DDD)V", "a",
 					"(L" + moverTypeClass + ";DDD)V");

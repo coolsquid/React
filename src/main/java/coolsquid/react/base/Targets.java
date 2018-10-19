@@ -7,6 +7,10 @@ import static coolsquid.react.api.event.EventManager.registerTargetProperty;
 import java.util.Collections;
 import java.util.Objects;
 
+import coolsquid.react.api.event.TargetCondition;
+import coolsquid.react.api.event.TargetProperty;
+import coolsquid.react.util.BlockWrapper;
+import coolsquid.react.util.Util;
 import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
@@ -25,10 +29,6 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
-import coolsquid.react.api.event.TargetCondition;
-import coolsquid.react.api.event.TargetProperty;
-import coolsquid.react.util.BlockWrapper;
-import coolsquid.react.util.Util;
 
 public class Targets {
 

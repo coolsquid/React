@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import coolsquid.react.util.Log;
-
 import org.apache.commons.io.FileUtils;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigRenderOptions;
 import com.typesafe.config.ConfigValueFactory;
+
+import coolsquid.react.util.Log;
 
 public class ConfigWrapper {
 

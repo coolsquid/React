@@ -2,10 +2,9 @@ package coolsquid.react.api.event;
 
 import java.util.function.Predicate;
 
+import coolsquid.react.event.InternalEventManager;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
-
-import coolsquid.react.event.InternalEventManager;
 
 public class EventManager {
 

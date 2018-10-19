@@ -10,24 +10,22 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.relauncher.Side;
-
-import coolsquid.react.api.event.Action;
-import coolsquid.react.api.event.Variable;
-import coolsquid.react.event.InternalEventManager;
-import coolsquid.react.util.Log;
-import coolsquid.react.util.Util;
-import coolsquid.react.util.WarningHandler;
-
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigOrigin;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
+
+import coolsquid.react.api.event.Action;
+import coolsquid.react.api.event.Variable;
+import coolsquid.react.event.InternalEventManager;
+import coolsquid.react.util.Log;
+import coolsquid.react.util.WarningHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class ConfigManager {
 

@@ -208,7 +208,7 @@ public class Events {
 
 		registerEvent("mob_move", EntityMoveEvent.class, (event) -> event.getEntity() instanceof EntityLivingBase);
 		registerVariable(EntityMoveEvent.class, "mover_type", (event) -> event.getMoverType().toString().toLowerCase());
-		
+
 		if (Loader.isModLoaded("gamestages")) {
 			registerEvent("game_stage_added", GameStageEvent.Added.class);
 			registerEvent("game_stage_add", GameStageEvent.Add.class);

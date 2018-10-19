@@ -1,16 +1,14 @@
 package coolsquid.react.network;
 
+import com.typesafe.config.ConfigFactory;
+
+import coolsquid.react.config.ConfigManager;
+import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-
-import coolsquid.react.config.ConfigManager;
-
-import com.typesafe.config.ConfigFactory;
-
-import io.netty.buffer.ByteBuf;
 
 public class PacketConfig implements IMessage {
 

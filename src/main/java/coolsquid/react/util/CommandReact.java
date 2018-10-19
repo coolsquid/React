@@ -12,6 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.FileUtils;
+
+import com.google.common.collect.Lists;
+
+import coolsquid.react.api.event.TargetCondition;
+import coolsquid.react.config.ConfigManager;
+import coolsquid.react.event.InternalEventManager;
+import coolsquid.react.network.PacketManager;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -23,15 +31,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.ClickEvent;
-
-import coolsquid.react.api.event.TargetCondition;
-import coolsquid.react.config.ConfigManager;
-import coolsquid.react.event.InternalEventManager;
-import coolsquid.react.network.PacketManager;
-
-import org.apache.commons.io.FileUtils;
-
-import com.google.common.collect.Lists;
 
 public class CommandReact extends CommandBase {
 

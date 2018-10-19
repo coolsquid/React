@@ -18,19 +18,19 @@ public class EntityMoveEvent extends EntityEvent {
 	}
 
 	public MoverType getMoverType() {
-		return type;
+		return this.type;
 	}
 
 	public double getX() {
-		return x;
+		return this.x;
 	}
 
 	public double getY() {
-		return y;
+		return this.y;
 	}
 
 	public double getZ() {
-		return z;
+		return this.z;
 	}
 
 	@Override

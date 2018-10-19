@@ -3,18 +3,17 @@ package coolsquid.react.network;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
+
+import coolsquid.react.React;
+import coolsquid.react.config.ConfigManager;
+import coolsquid.react.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-
-import coolsquid.react.React;
-import coolsquid.react.config.ConfigManager;
-import coolsquid.react.util.Log;
-
-import org.apache.commons.io.FileUtils;
 
 public class PacketManager {
 

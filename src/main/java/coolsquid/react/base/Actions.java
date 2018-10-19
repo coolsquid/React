@@ -12,7 +12,6 @@ import coolsquid.react.api.event.Action;
 import coolsquid.react.util.Log;
 import coolsquid.react.util.Util;
 import net.darkhax.gamestages.GameStageHelper;
-import net.darkhax.gamestages.GameStages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
@@ -206,7 +205,7 @@ public class Actions {
 					(boolean) parameters.get("drop"));
 		}, "drop");
 		registerAction("spawn_mob", (event, target, parameters, variables) -> {
-			World world = ((World) variables.get("world"));
+			World world = (World) variables.get("world");
 			Entity entity = EntityList
 					.createEntityByIDFromName(new ResourceLocation((String) parameters.get("mob_type")), world);
 			Vec3d loc = Util.getCoordFromTarget(target, parameters);
@@ -214,7 +213,7 @@ public class Actions {
 			world.spawnEntity(entity);
 		}, "mob_type");
 		registerAction("spawn_item", (event, target, parameters, variables) -> {
-			World world = ((World) variables.get("world"));
+			World world = (World) variables.get("world");
 			Vec3d loc = Util.getCoordFromTarget(target, parameters);
 			ItemStack stack = new ItemStack(
 					Item.REGISTRY.getObject(new ResourceLocation((String) parameters.get("item"))), 1,

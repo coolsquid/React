@@ -3,6 +3,18 @@ package coolsquid.react;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.Level;
+
+import coolsquid.react.asm.Transformer;
+import coolsquid.react.base.Actions;
+import coolsquid.react.base.Conditions;
+import coolsquid.react.base.Events;
+import coolsquid.react.base.Targets;
+import coolsquid.react.config.ConfigManager;
+import coolsquid.react.network.PacketConfig;
+import coolsquid.react.network.PacketManager;
+import coolsquid.react.util.CommandReact;
+import coolsquid.react.util.Log;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
@@ -16,18 +28,6 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnection
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import coolsquid.react.asm.Transformer;
-import coolsquid.react.base.Actions;
-import coolsquid.react.base.Conditions;
-import coolsquid.react.base.Events;
-import coolsquid.react.base.Targets;
-import coolsquid.react.config.ConfigManager;
-import coolsquid.react.network.PacketConfig;
-import coolsquid.react.network.PacketManager;
-import coolsquid.react.util.CommandReact;
-import coolsquid.react.util.Log;
-
-import org.apache.logging.log4j.Level;
 
 @Mod(modid = React.MODID, name = React.NAME, version = React.VERSION, dependencies = React.DEPENDENCIES, updateJSON = React.UPDATE_JSON_URL)
 public class React {

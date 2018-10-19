@@ -96,7 +96,7 @@ public class Util {
 		}
 		return item.getRegistryName().toString();
 	}
-	
+
 	public static NBTTagCompound createNBT(Config config) {
 		return (NBTTagCompound) createNBT(config.root().unwrapped());
 	}

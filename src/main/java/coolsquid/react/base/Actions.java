@@ -207,7 +207,8 @@ public class Actions {
 		}, "drop");
 		registerAction("spawn_mob", (event, target, parameters, variables) -> {
 			World world = ((World) variables.get("world"));
-			Entity entity = EntityList.createEntityByIDFromName(new ResourceLocation((String) parameters.get("mob_type")), world);
+			Entity entity = EntityList
+					.createEntityByIDFromName(new ResourceLocation((String) parameters.get("mob_type")), world);
 			Vec3d loc = Util.getCoordFromTarget(target, parameters);
 			entity.setPosition(loc.x, loc.y, loc.z);
 			world.spawnEntity(entity);
@@ -215,7 +216,9 @@ public class Actions {
 		registerAction("spawn_item", (event, target, parameters, variables) -> {
 			World world = ((World) variables.get("world"));
 			Vec3d loc = Util.getCoordFromTarget(target, parameters);
-			ItemStack stack = new ItemStack(Item.REGISTRY.getObject(new ResourceLocation((String) parameters.get("item"))), 1, parameters.containsKey("meta") ? ((Integer) parameters.get("meta")).intValue() : 0);
+			ItemStack stack = new ItemStack(
+					Item.REGISTRY.getObject(new ResourceLocation((String) parameters.get("item"))), 1,
+					parameters.containsKey("meta") ? ((Integer) parameters.get("meta")).intValue() : 0);
 			if (parameters.containsKey("nbt")) {
 				stack.setTagCompound(Util.createNBT((Config) parameters.get("nbt")));
 			}

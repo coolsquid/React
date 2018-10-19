@@ -33,7 +33,8 @@ public class Transformer implements IClassTransformer, IFMLLoadingPlugin {
 			String entityClass = (name.equals(transformedName) ? "net/minecraft/entity/Entity" : "vg");
 			String moverTypeClass = (name.equals(transformedName) ? "net/minecraft/entity/MoverType" : "vv");
 			ClassNode c = createClassNode(basicClass);
-			MethodNode m = this.getMethod(c, "move", "(Lnet/minecraft/entity/MoverType;DDD)V", "a", "(L" + moverTypeClass + ";DDD)V");
+			MethodNode m = this.getMethod(c, "move", "(Lnet/minecraft/entity/MoverType;DDD)V", "a",
+					"(L" + moverTypeClass + ";DDD)V");
 			InsnList toInject = new InsnList();
 			toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 			toInject.add(new VarInsnNode(Opcodes.ALOAD, 1));

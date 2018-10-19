@@ -203,7 +203,7 @@ public class Events {
 			list.removeIf((e) -> e == null);
 			return list;
 		});
-		
+
 		registerEvent("mob_move", EntityMoveEvent.class, (event) -> event.getEntity() instanceof EntityLivingBase);
 		registerVariable(EntityMoveEvent.class, "mover_type", (event) -> event.getMoverType().toString().toLowerCase());
 	}

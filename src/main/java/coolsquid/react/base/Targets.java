@@ -125,27 +125,23 @@ public class Targets {
 		registerTargetCondition("active_hand",
 				(target, expected) -> expected.equals(target.getActiveHand().toString().toLowerCase()),
 				EntityLivingBase.class);
-		registerTargetCondition("facing_direction", (TargetCondition<EntityLivingBase, String>) (target, expected) -> expected.equals(target.getHorizontalFacing().toString().toLowerCase()), EntityLivingBase.class);
+		registerTargetCondition("facing_direction", (TargetCondition<EntityLivingBase, String>) (target,
+				expected) -> expected.equals(target.getHorizontalFacing().toString().toLowerCase()),
+				EntityLivingBase.class);
 
-		registerTargetCondition("time",
-				(target, expected) -> {
-					if (expected instanceof String) {
-						return target.isDaytime() ? expected.equals("day") : expected.equals("night");
-					} else {
-						return target.getWorldTime() == ((Number) expected).longValue();
-					}
-				},
-				World.class);
-		registerTargetCondition("min_time",
-				(target, expected) -> {
-					return target.getWorldTime() >= ((Number) expected).longValue();
-				},
-				World.class);
-		registerTargetCondition("max_time",
-				(target, expected) -> {
-					return target.getWorldTime() <= ((Number) expected).longValue();
-				},
-				World.class);
+		registerTargetCondition("time", (target, expected) -> {
+			if (expected instanceof String) {
+				return target.isDaytime() ? expected.equals("day") : expected.equals("night");
+			} else {
+				return target.getWorldTime() == ((Number) expected).longValue();
+			}
+		}, World.class);
+		registerTargetCondition("min_time", (target, expected) -> {
+			return target.getWorldTime() >= ((Number) expected).longValue();
+		}, World.class);
+		registerTargetCondition("max_time", (target, expected) -> {
+			return target.getWorldTime() <= ((Number) expected).longValue();
+		}, World.class);
 		registerTargetCondition("difficulty",
 				(target, expected) -> expected.equals(target.getWorldInfo().getDifficulty().toString().toLowerCase()),
 				World.class);
@@ -200,7 +196,8 @@ public class Targets {
 		}, EntityPlayer.class);
 
 		if (Loader.isModLoaded("gamestages")) {
-			registerTargetCondition("has_game_stage", (TargetCondition<EntityPlayer, String>) (target, expected) -> GameStageHelper.getPlayerData(target).hasStage(expected), EntityPlayer.class);
+			registerTargetCondition("has_game_stage", (TargetCondition<EntityPlayer, String>) (target,
+					expected) -> GameStageHelper.getPlayerData(target).hasStage(expected), EntityPlayer.class);
 		}
 	}
 

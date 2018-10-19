@@ -7,6 +7,7 @@ import static coolsquid.react.api.event.EventManager.registerTargetProperty;
 import java.util.Collections;
 import java.util.Objects;
 
+import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -23,7 +24,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-
+import net.minecraftforge.fml.common.Loader;
 import coolsquid.react.api.event.TargetCondition;
 import coolsquid.react.api.event.TargetProperty;
 import coolsquid.react.util.BlockWrapper;
@@ -197,6 +198,10 @@ public class Targets {
 			}
 			return true;
 		}, EntityPlayer.class);
+
+		if (Loader.isModLoaded("gamestages")) {
+			registerTargetCondition("has_game_stage", (TargetCondition<EntityPlayer, String>) (target, expected) -> GameStageHelper.getPlayerData(target).hasStage(expected), EntityPlayer.class);
+		}
 	}
 
 	public static void registerTargetProperties() {

@@ -35,7 +35,7 @@ public class React {
 	public static final String MODID = "react";
 	public static final String NAME = "React";
 	public static final String VERSION = "1.2.2";
-	public static final String DEPENDENCIES = "required-after:forge@[14.21.1.2387,)";
+	public static final String DEPENDENCIES = "required-after:forge@[14.21.1.2387,);after:gamestages";
 	public static final String UPDATE_JSON_URL = "https://coolsquid.me/api/version/react.json";
 	public static final String ISSUE_TRACKER_URL = "https://github.com/coolsquid/React/issues";
 	public static final String CERTIFICATE_FINGERPRINT = "@FINGERPRINT@";

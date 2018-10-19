@@ -11,6 +11,8 @@ import com.typesafe.config.Config;
 import coolsquid.react.api.event.Action;
 import coolsquid.react.util.Log;
 import coolsquid.react.util.Util;
+import net.darkhax.gamestages.GameStageHelper;
+import net.darkhax.gamestages.GameStages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
@@ -36,6 +38,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 public class Actions {
@@ -219,5 +222,17 @@ public class Actions {
 			EntityItem entity = new EntityItem(world, loc.x, loc.y, loc.z, stack);
 			world.spawnEntity(entity);
 		}, "item");
+
+		if (Loader.isModLoaded("gamestages")) {
+			registerAction("add_game_stage", (Action<EntityPlayer>) (event, target, parameters, variables) -> {
+				GameStageHelper.getPlayerData(target).addStage((String) parameters.get("stage"));
+			}, "stage");
+			registerAction("remove_game_stage", (Action<EntityPlayer>) (event, target, parameters, variables) -> {
+				GameStageHelper.getPlayerData(target).removeStage((String) parameters.get("stage"));
+			}, "stage");
+			registerAction("clear_game_stages", (Action<EntityPlayer>) (event, target, parameters, variables) -> {
+				GameStageHelper.getPlayerData(target).clear();
+			});
+		}
 	}
 }

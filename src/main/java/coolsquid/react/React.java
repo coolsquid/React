@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnection
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
+import coolsquid.react.asm.Transformer;
 import coolsquid.react.base.Actions;
 import coolsquid.react.base.Conditions;
 import coolsquid.react.base.Events;
@@ -43,6 +43,9 @@ public class React {
 	@Mod.EventHandler
 	public void onPreInit(FMLPreInitializationEvent event) {
 		Log.REACT.info("Running React v%s.", VERSION);
+		if (!Transformer.transformEntity) {
+			Log.REACT.info("The \"mob_move\" event has been disabled through the asm.properties file.");
+		}
 	}
 
 	@Mod.EventHandler

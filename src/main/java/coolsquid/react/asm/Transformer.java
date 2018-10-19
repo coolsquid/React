@@ -25,7 +25,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 public class Transformer implements IClassTransformer, IFMLLoadingPlugin {
 
-	private static boolean transformEntity;
+	public static boolean transformEntity;
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {

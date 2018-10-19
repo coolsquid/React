@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 
 import coolsquid.react.api.event.EntityMoveEvent;
 import coolsquid.react.util.BlockWrapper;
+import net.darkhax.gamestages.event.GameStageEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,6 +46,7 @@ import net.minecraftforge.event.world.BlockEvent.CropGrowEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
@@ -206,5 +208,12 @@ public class Events {
 
 		registerEvent("mob_move", EntityMoveEvent.class, (event) -> event.getEntity() instanceof EntityLivingBase);
 		registerVariable(EntityMoveEvent.class, "mover_type", (event) -> event.getMoverType().toString().toLowerCase());
+		
+		if (Loader.isModLoaded("gamestages")) {
+			registerEvent("game_stage_added", GameStageEvent.Added.class);
+			registerEvent("game_stage_add", GameStageEvent.Add.class);
+			registerEvent("game_stage_removed", GameStageEvent.Removed.class);
+			registerEvent("game_stage_remove", GameStageEvent.Remove.class);
+		}
 	}
 }

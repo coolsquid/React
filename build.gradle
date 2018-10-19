@@ -47,6 +47,13 @@ minecraft {
 	replace '@FINGERPRINT@', keyProperties.certificateFingerprint
 }
 
+jar {
+    manifest {
+    	attributes 'FMLCorePlugin': 'coolsquid.react.asm.Transformer'
+    	attributes 'FMLCorePluginContainsFMLMod': 'true'
+    }
+}
+
 // include all files in /libs as dependencies
 dependencies {
 	compile fileTree(dir: "libs", include: "*.jar,*.zip")
@@ -141,4 +148,8 @@ String getVersionFromJava(File file) {
     file.write(outfile);
 
     return "$release.$update.$patch";
+}
+
+test {
+	version += "-test"
 }

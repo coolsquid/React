@@ -44,6 +44,7 @@ public class Conditions {
 
 		registerCondition("remote_world",
 				(event, variables, value) -> ((World) variables.get("world")).isRemote == (boolean) value, "world");
+		registerCondition("mover_type", (event, variables, value) -> value.equals(variables.get("mover_type")), "mover_type");
 	}
 
 }

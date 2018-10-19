@@ -124,6 +124,7 @@ public class Targets {
 		registerTargetCondition("active_hand",
 				(target, expected) -> expected.equals(target.getActiveHand().toString().toLowerCase()),
 				EntityLivingBase.class);
+		registerTargetCondition("facing_direction", (TargetCondition<EntityLivingBase, String>) (target, expected) -> expected.equals(target.getHorizontalFacing().toString().toLowerCase()), EntityLivingBase.class);
 
 		registerTargetCondition("time",
 				(target, expected) -> {

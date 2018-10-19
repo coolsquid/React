@@ -6,6 +6,10 @@ import static coolsquid.react.api.event.EventManager.registerVariable;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import coolsquid.react.api.event.EntityMoveEvent;
+import coolsquid.react.util.BlockWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,10 +50,6 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
-
-import coolsquid.react.util.BlockWrapper;
-
-import com.google.common.collect.Lists;
 
 public class Events {
 
@@ -203,5 +203,8 @@ public class Events {
 			list.removeIf((e) -> e == null);
 			return list;
 		});
+		
+		registerEvent("mob_move", EntityMoveEvent.class, (event) -> event.getEntity() instanceof EntityLivingBase);
+		registerVariable(EntityMoveEvent.class, "mover_type", (event) -> event.getMoverType().toString().toLowerCase());
 	}
 }
